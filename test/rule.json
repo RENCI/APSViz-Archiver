@@ -1,0 +1,20 @@
+[
+  {
+    "name": "test - routine/move to cold storage by age",
+    "source": 2,
+    "class": 2,
+    "element": 1,
+    "type":3,
+    "trigger": 1,
+    "action": 1
+  },
+  {
+    "name": "test - routine/delete from cold by type",
+    "source": 2,
+    "class": 2,
+    "element": 1,
+    "type": 1,
+    "trigger": 2,
+    "action": 2
+  }
+]
