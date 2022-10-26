@@ -8,13 +8,6 @@ name: Build and publish the docker image
 
 # trigger event is publishing a release in the repo (or a manual launch)
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'version'
-        required: false
-        default: ''
-
   release:
     types: [published]
 
@@ -31,19 +24,6 @@ jobs:
 
     # job steps
     steps:
-
-      # get the tag for the image if passed in
-      - name: Get the manually entered version
-        if: ${{ github.event.inputs.version != '' }}
-        run: |
-          echo "VERSION=${ ${{ github.event.inputs.version}} }" >> $GITHUB_OUTPUT
-
-      # get the tag for the image if not passed in
-      - name: Get the manually entered version
-        if: ${{ github.event.inputs.version == '' }}
-        run: |
-          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
-
       # checkout the codebase
       - name: Checkout
         uses: actions/checkout@v1
@@ -56,6 +36,10 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PW }}
 
+      # get the tag for the image
+      - name: Get the version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
       # build and push the image. The docker v3 action automatically handles the git checkout.
       - name: Build/Push the image to the registry
