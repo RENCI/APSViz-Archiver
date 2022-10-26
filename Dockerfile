@@ -10,8 +10,8 @@
 FROM python:3.10-slim
 
 # update the image base
-RUN apt-get update && apt-get upgrade
-# RUN apt-get install -y procps
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y procps
 
 # clear the apt cache
 RUN apt-get clean
@@ -26,13 +26,6 @@ RUN pip install -r requirements.txt
 # Copy in the rest of the code
 COPY main.py main.py
 COPY src src
-COPY .pylintrc .pylintrc
-COPY ./test/*.py test/
-COPY ./test/test_files test/test_files/
 
-ENV LOG_PATH /data/logs
-ENV TESTDATA_PATH /data/tmp
-ENV PYTHONPATH="/repo/APSVIZ-Archiver/src:/repo/APSVIZ-Archiver/test:$PYTHONPATH"
-
-# start the tests
-CMD pytest
+# ENV LOG_PATH /data/logs
+ENV PYTHONPATH="/repo/APSVIZ-Archiver"
