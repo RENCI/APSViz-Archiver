@@ -6,8 +6,9 @@
 
 name: Create and publish the APSVIZ archiver Docker image tagged with "latest" and version number
 
-# trigger event is publishing a release in the repo
+# trigger event is publishing a release in the repo (or a manual launch)
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
