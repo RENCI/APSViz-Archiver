@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: LicenseRef-RENCI
 SPDX-License-Identifier: MIT
 -->
-![image not found](https://avatars.githubusercontent.com/u/17863981?s=200&v=4 "RENCI")
+![image not found](renci-logo.png "RENCI")
 
 # APSViz-Archiver
 Archives file created by the various APSViz applications and processes.
