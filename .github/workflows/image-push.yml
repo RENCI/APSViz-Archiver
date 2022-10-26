@@ -36,9 +36,9 @@ jobs:
       - name: Get the manually entered version
         if: ${{ github.event.inputs.version != '' }}
         run: |
-          echo "VERSION=${ ${{ github.event.inputs.version_tag }} }" >> $GITHUB_OUTPUT
+          echo "VERSION=${ ${{ github.event.inputs.version}} }" >> $GITHUB_OUTPUT
 
-      # get the tag for the image if passed in
+      # get the tag for the image if not passed in
       - name: Get the manually entered version
         if: ${{ github.event.inputs.version == '' }}
         run: |
