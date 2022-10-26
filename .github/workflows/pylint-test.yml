@@ -19,10 +19,8 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      # Cache docker layers for faster build
       - uses: satackey/action-docker-layer-caching@v0.0.8
-        # Ignore the failure of a step and avoid terminating the job.
-        # continue-on-error: true
+        continue-on-error: true
 
       - name: Build docker image
         run: docker build -t archiver-testing -f Dockerfile.test .
@@ -34,7 +32,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
 
   test:
-    name: Run pytest
+    name: Execute pytest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
