@@ -10,12 +10,11 @@ name: Build and publish the docker image
 on:
   workflow_dispatch:
     inputs:
-      version:
+      version_tag:
         description: 'version'
         required: false
         default: ${GITHUB_REF/refs\/tags\//}
-      tags:
-        description: 'version tag'
+
   release:
     types: [published]
 
@@ -47,7 +46,7 @@ jobs:
       # get the tag for the image
       - name: Get the version
         id: get_version
-        run: echo "VERSION=${ github.event.inputs.version }" >> $GITHUB_OUTPUT
+        run: echo "VERSION=${ github.event.inputs.version_tag }" >> $GITHUB_OUTPUT
 
       # build and push the image. The docker v3 action automatically handles the git checkout.
       - name: Build/Push the image to the registry
