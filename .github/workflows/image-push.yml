@@ -10,10 +10,10 @@ name: Build and publish the docker image
 on:
   workflow_dispatch:
     inputs:
-      version_tag:
+      version:
         description: 'version'
         required: false
-        default: "{GITHUB_REF/refs\/tags\//"
+        default: '${GITHUB_REF/refs\/tags\//}'
 
   release:
     types: [published]
