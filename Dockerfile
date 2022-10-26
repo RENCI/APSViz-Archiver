@@ -16,6 +16,10 @@ RUN apt-get install -y procps
 # clear the apt cache
 RUN apt-get clean
 
+# add user nru and switch to it
+RUN useradd --create-home -u 1000 nru
+USER nru
+
 # set up requirements
 WORKDIR /repo/APSVIZ-Archiver
 
@@ -27,5 +31,5 @@ RUN pip install -r requirements.txt
 COPY main.py main.py
 COPY src src
 
-# ENV LOG_PATH /data/logs
+# set the python path for source
 ENV PYTHONPATH="/repo/APSVIZ-Archiver"
