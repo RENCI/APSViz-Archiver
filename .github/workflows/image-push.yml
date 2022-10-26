@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-RENCI
 # SPDX-License-Identifier: MIT
 
-name: Create and publish the APSVIZ archiver Docker image
+name: Build and publish the docker image
 
 # trigger event is publishing a release in the repo (or a manual launch)
 on:
