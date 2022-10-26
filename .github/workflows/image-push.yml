@@ -32,12 +32,17 @@ jobs:
     # job steps
     steps:
 
-      # get the tag for the image
-      - name: Get the version
-        if: inputs.version
-          - run: echo "VERSION=${ ${{github.event.inputs.version_tag}} }" >> $GITHUB_OUTPUT
-        else:
-          - run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      # get the tag for the image if passed in
+      - name: Get the manually entered version
+        if: ${{ github.event.inputs.version != '' }}
+        run: |
+          echo "VERSION=${ ${{ github.event.inputs.version_tag }} }" >> $GITHUB_OUTPUT
+
+      # get the tag for the image if passed in
+      - name: Get the manually entered version
+        if: ${{ github.event.inputs.version == '' }}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
       # checkout the codebase
       - name: Checkout
