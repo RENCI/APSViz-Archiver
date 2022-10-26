@@ -16,7 +16,7 @@ env:
   REGISTRY: containers.renci.org/eds/apsviz-archiver
 # job definition
 jobs:
-  pylint-build-and-push-image:
+  Build-and-publish-image:
     runs-on: ubuntu-latest
     permissions:
       contents: read
