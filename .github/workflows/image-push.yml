@@ -6,7 +6,7 @@
 
 name: Build and publish the docker image
 
-# trigger event is publishing a release in the repo (or a manual launch)
+# trigger event is publishing a release in the repo
 on:
   release:
     types: [published]
@@ -14,7 +14,6 @@ on:
 # working parameters that are specific to this script
 env:
   REGISTRY: containers.renci.org/eds/apsviz-archiver
-
 # job definition
 jobs:
   pylint-build-and-push-image:
