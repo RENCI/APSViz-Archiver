@@ -13,7 +13,7 @@ on:
       version:
         description: 'version'
         required: false
-        default: 'GITHUB_REF/refs\/tags\//'
+        default: ''
 
   release:
     types: [published]
@@ -31,6 +31,14 @@ jobs:
 
     # job steps
     steps:
+
+      # get the tag for the image
+      - name: Get the version
+        if: inputs.version
+          - run: echo "VERSION=${ ${{github.event.inputs.version_tag}} }" >> $GITHUB_OUTPUT
+        else:
+          - run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+
       # checkout the codebase
       - name: Checkout
         uses: actions/checkout@v1
@@ -43,10 +51,6 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PW }}
 
-      # get the tag for the image
-      - name: Get the version
-        id: get_version
-        run: echo "VERSION=${ ${{ github.event.inputs.version }} }" >> $GITHUB_OUTPUT
 
       # build and push the image. The docker v3 action automatically handles the git checkout.
       - name: Build/Push the image to the registry
