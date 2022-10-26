@@ -4,14 +4,20 @@
 # SPDX-License-Identifier: LicenseRef-RENCI
 # SPDX-License-Identifier: MIT
 
+"""
+    Class LoggingUtil - Logging utilities.
+
+    Author: Phil Owen, 10/19/2022
+"""
+
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 
 
-class LoggingUtil(object):
+class LoggingUtil:
     """
-    creates and configures a logger
+        Creates and configures a logger
     """
     @staticmethod
     def init_logging(name, level=logging.INFO, line_format='short', log_file_path=None):
@@ -67,3 +73,20 @@ class LoggingUtil(object):
 
         # return to the caller
         return logger
+
+    @staticmethod
+    def prep_for_logging() -> (int, str):
+        """
+        gets the environment variables for the log level and directory.
+
+        :return:
+        """
+        log_level: int = int(os.getenv('LOG_LEVEL', str(logging.DEBUG)))
+        log_path: str = os.getenv('LOG_PATH', os.path.dirname(__file__))
+
+        # create the dir if it does not exist
+        if not os.path.exists(log_path):
+            os.mkdir(log_path)
+
+        # return to the caller
+        return log_level, log_path
