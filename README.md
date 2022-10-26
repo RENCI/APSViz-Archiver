@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 # APSViz-Archiver
 Archives file created by the various APSViz applications and processes.
 
-#### Licences...
+#### Licenses...
 [![MIT License](https://img.shields.io/badge/License-MIT-red.svg)](https://github.com/RENCI/APSVIZ-Supervisor/blob/master/LICENSE)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 [![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://renci.org/)
