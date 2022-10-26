@@ -14,5 +14,5 @@ SPDX-License-Identifier: MIT
 _[![Pylint and Pytest](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml)_
 [![Build and push the Docker image](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml)
 
-# APZVIZ-Archiver
+# APSViz-Archiver
 Archives file data created by the APSViz application and processes
