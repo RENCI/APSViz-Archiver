@@ -9,7 +9,7 @@ name: Pylint and pytest the repo codebase
 on:
   push:
     branches:
-    - master
+    - main
 
 jobs:
   lint:
