@@ -1,6 +1,6 @@
 {
   "rule_definition_name": "APSViz data archival rule set.",
-  "rule_definition_version": "0.0.0",
+  "rule_definition_version": "test",
   "description": "Rules for APSViz data archival.",
   "rule_sets":
   [
