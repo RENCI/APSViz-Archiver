@@ -16,14 +16,14 @@ RUN apt-get install -y procps
 # clear the apt cache
 RUN apt-get clean
 
-# add user nru and switch to it
+# create/switch to a non-root user
 RUN useradd --create-home -u 1000 nru
 USER nru
 
 # set up requirements
 WORKDIR /repo/APSVIZ-Archiver
 
-# Normal requirements
+# install required python packages
 ADD requirements.txt .
 RUN pip install -r requirements.txt
 
