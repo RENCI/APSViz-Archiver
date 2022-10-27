@@ -35,7 +35,7 @@ def test_copy_file_sweep():
 
     # create a test rule
     test_rule: dict = {"name": "Test - Copy file Sweep BY_AGE", "description": "File copy BY_AGE.", "query_criteria_type": "BY_AGE",
-                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "GREATER_THAN_OR_EQUAL_TO", "action_type": "SWEEP_COPY",
+                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "LESS_THAN", "action_type": "SWEEP_COPY",
                        "data_type": "FILE", "source": source_dir, "destination": dest_dir}
 
     # run the rule
@@ -65,7 +65,7 @@ def test_move_file_sweep():
 
     # create a test rule
     test_rule: dict = {"name": "Test - Move file Sweep BY_AGE", "description": "File move BY_AGE.", "query_criteria_type": "BY_AGE",
-                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "GREATER_THAN_OR_EQUAL_TO", "action_type": "SWEEP_MOVE",
+                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "LESS_THAN", "action_type": "SWEEP_MOVE",
                        "data_type": "FILE", "source": source_dir, "destination": dest_dir}
 
     # get a list of the contents of the source directory
@@ -94,7 +94,7 @@ def test_remove_file_sweep():
 
     # create a test rule
     test_rule: dict = {"name": "Test - Remove files sweep BY_AGE", "description": "Remove files BY_AGE.", "query_criteria_type": "BY_AGE",
-                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
+                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "LESS_THAN",
                        "action_type": "SWEEP_REMOVE", "data_type": "FILE", "source": source_dir, "destination": None}
 
     # get a list of the contents of the source directory
