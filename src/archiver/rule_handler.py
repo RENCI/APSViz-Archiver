@@ -267,15 +267,15 @@ class RuleHandler:
                     if self.rule_utils.meets_criteria(rule, entity_details):
                         if rule.action_type == ActionType.SWEEP_MOVE:
                             # move the directory
-                            ret_val = self.rule_utils.move_directory(rule)
+                            ret_val = self.rule_utils.move_directory(rule, entity)
                         elif rule.action_type == ActionType.SWEEP_COPY:
                             # move the directory
-                            ret_val = self.rule_utils.copy_directory(rule)
+                            ret_val = self.rule_utils.copy_directory(rule, entity)
                         elif rule.action_type == ActionType.SWEEP_REMOVE:
                             # remove the directory
                             ret_val = self.rule_utils.remove_directory(rule, entity)
                     else:
-                        self.logger.debug('%s failed to meet criteria.', rule.source)
+                        self.logger.debug('%s -> %s failed to meet criteria.', rule.source, entity)
                         failed_met_criteria += 1
 
                 # if this is a file operation perform the action type
@@ -292,7 +292,7 @@ class RuleHandler:
                             # remove the directory
                             ret_val = self.rule_utils.remove_file(rule, entity)
                     else:
-                        self.logger.debug('%s failed to meet criteria.', rule.source)
+                        self.logger.debug('%s -> %s failed to meet criteria.', rule.source, entity)
                         failed_met_criteria += 1
 
         if failed_met_criteria > 0:
