@@ -88,7 +88,7 @@ class GeneralUtils:
         # get the rule definitions from a database or a k8s script perhaps?
 
         # open the file
-        with open(os.path.join(os.path.dirname(__file__), str(infile)), encoding='UTF-8') as rules_fh:
+        with open(infile, encoding='UTF-8') as rules_fh:
             # load the json
             rule_set = json.loads(rules_fh.read())
 
