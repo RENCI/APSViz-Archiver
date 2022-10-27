@@ -18,7 +18,7 @@ Archives file created by the various APSViz applications and processes.
 [![Python](https://img.shields.io/badge/Python-3.10.8-orange)](https://github.com/PyCQA/pylint)
 [![Linting Pylint](https://img.shields.io/badge/Pylint-%202.15.5-yellowgreen)](https://github.com/PyCQA/pylint)
 [![Pytest](https://img.shields.io/badge/Pytest-%207.2.0-yellowgreen)](https://github.com/pytest-dev/pytest)
-#### Status...
+#### Build status...
 [![Pylint and Pytest](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml)
 [![Build and push the Docker image](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml)
 
@@ -33,10 +33,10 @@ Atomic rules can optionally specify query criteria (age, etc.) that is paired wi
 interrogate an entity prior to performing an operation.
 
 A simple Rule example shown below has specified:
- - A Rule definition with details including a name, version and a description.
- - 1 Rule set that contains atomic Rules.
- - 2 atomic Rules for copy and move operations
- - With each atomic Rule specifying optional query criteria that will act on files older than (or equal to) 30 days.
+ - A rule definition with details including a name, version and a description.
+ - A rule Set that contains rule operations.
+ - 2 rule operations for copy and move.
+   - With each rule specifying a query criteria that will trigger the rule operation.
 
 ```
 {
@@ -46,12 +46,12 @@ A simple Rule example shown below has specified:
   "rule_sets":
   [
     {
-      "rule_set_name": "Test complete rule set 1",
-      "description": "tests a complete rule by making a move request",
+      "rule_set_name": "Test rule set",
+      "description": "Tests a rule set by making a copy then a  move request.",
       "rules": [
         {
-          "name": "Test - Copy Test file",
-          "description": "This test Copies a file from source to destination.",
+          "name": "Test - Copy test file",
+          "description": "This test copies a file from source to destination.",
           "query_criteria_type": "BY_AGE",
           "query_data_type": "INTEGER",
           "query_data_value": 30,
@@ -62,7 +62,7 @@ A simple Rule example shown below has specified:
           "destination": "/dest/some-new-data-location"
         },
         {
-          "name": "Test - Move Test file",
+          "name": "Test - Move test file",
           "description": "This test moves a file from source to destination.",
           "query_criteria_type": "BY_AGE",
           "query_data_type": "INTEGER",
@@ -80,7 +80,7 @@ A simple Rule example shown below has specified:
 ```
 
 There are GitHub actions to manage the code in this repo:
- - Pylint (minimum score of 9.5 to pass),
+ - Pylint (minimum score of 9.95 to pass),
  - Pytest (with code coverage),
  - Build/publish a Docker image.
 
