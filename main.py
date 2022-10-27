@@ -18,7 +18,7 @@ def run_rule_file(rule_file: str) -> bool:
     """
     Runs rule files. Input argument can be a singleton or a comma seperated list of file names
 
-    :param: rule_file
+    :param rule_file
     :return:
     """
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # example input
-    # ../../test/test_files/test_rules.json,../../test/test_files/test_all_rules.json
+    # 'test/test_files/test_rules.json,test/test_files/test_all_rules.json'
 
     # execute the rule file(s)
     ret_val: bool = run_rule_file(args.filename)
