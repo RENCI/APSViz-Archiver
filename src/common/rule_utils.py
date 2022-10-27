@@ -91,24 +91,36 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    def move_directory(self, rule: Rule) -> bool:
+    def move_directory(self, rule: Rule, opt_name: str = None) -> bool:
         """
         Moves the directory from source to destination
 
         :param rule:
+        :param opt_name:
         :return:
         """
         # init the return value
         ret_val: bool = False
 
         try:
-            # if the path exists the source directory is moved to the dest
-            if os.path.exists(rule.destination):
-                shutil.move(rule.source, rule.destination)
-            # else the source directory is renamed to the destination directory
+            # is there more to this source sweep operation
+            if opt_name:
+                # append the sweep dir
+                source = os.path.join(rule.source, opt_name + "\\")
+                destination = os.path.join(rule.destination, opt_name + "\\")
             else:
-                os.rename(rule.source, rule.destination)
+                # just use the source
+                source = rule.source
+                destination = rule.destination
 
+            # if the path exists the source directory is moved to the dest
+            # if os.path.exists(destination):
+            shutil.move(source, destination)
+            # else the source directory is renamed to the destination directory
+            # else:
+            #     os.rename(source, destination)
+
+            # do we
             # set the return value
             ret_val = True
 
@@ -157,34 +169,45 @@ class RuleUtils:
             ret_val = True
 
         except FileExistsError:
-            self.logger.error('Error: File already exists.')
+            self.logger.exception('Error: File % already exists.', rule.destination)
         except Exception:
             self.logger.exception('Error: General exception detected during a file copy.')
 
         # return to the caller
         return ret_val
 
-    def copy_directory(self, rule: Rule) -> bool:
+    def copy_directory(self, rule: Rule, opt_name: str = None) -> bool:
         """
         copies a directory from source to destination
 
         :param rule:
+        :param opt_name:
         :return:
         """
         # init the return value
         ret_val: bool = False
 
         try:
+            # is there more to this source sweep operation
+            if opt_name:
+                # append the sweep dir
+                source = os.path.join(rule.source, opt_name + "\\")
+                destination = os.path.join(rule.destination, opt_name + "\\")
+            else:
+                # just use the source
+                source = rule.source
+                destination = rule.destination
+
             # copy the directory
-            shutil.copytree(rule.source, rule.destination)
+            shutil.copytree(source, destination, dirs_exist_ok=True)
 
             # set the return value
             ret_val = True
 
         except FileNotFoundError:
-            self.logger.error('Error: Directory not found.')
+            self.logger.exception('Error: Directory %s not found.', rule.source)
         except FileExistsError:
-            self.logger.error('Error: Directory already exists.')
+            self.logger.exception('Error: Directory %s already exists.', rule.destination)
         except Exception:
             self.logger.exception('Error: General exception detected during a directory copy.')
 
@@ -318,8 +341,8 @@ class RuleUtils:
         current_age = int((time.time() - entity_details.st_ctime)) / 86400
 
         # the data value for age is in days
-        # TESTING - currently assuming 0 - TESTING
-        target_age = 0  # $$$: rule.query_data_value
+        # TESTING - target age = 0 - TESTING
+        target_age = rule.query_data_value
 
         # make the EQUALS comparison
         if rule.predicate_type == PredicateType.EQUALS:
@@ -379,8 +402,8 @@ class RuleUtils:
         :return:
         """
         # convert values that are enum types
-        rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] \
-            if rule['query_criteria_type'] is not None else QueryCriteriaType.NONE
+        rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] if rule[
+                                                                                            'query_criteria_type'] is not None else QueryCriteriaType.NONE
 
         rule['query_data_type'] = QueryDataType[rule['query_data_type']] if rule['query_data_type'] is not None else QueryDataType.NONE
         rule['predicate_type'] = PredicateType[rule['predicate_type']] if rule['predicate_type'] is not None else PredicateType.NONE
