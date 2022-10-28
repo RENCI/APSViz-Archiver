@@ -23,10 +23,10 @@ Archives file created by the various APSViz applications and processes.
 [![Build and push the Docker image](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml)
 
 ## Description
-This product is designed to perform copy/move/remove operations on file or directory entities within a Kubernetes CronJob. Additional functionality 
-is implemented to sweep through all file/directory entities located within a directory.
+This product is designed to perform copy/move/remove operations on file or directory entities. Additional functionality 
+is implemented to sweep through all file/directory entities located within a directory. This product is intended to be run within a Kubernetes CronJob.
 
-This product is rule based./ Each Rule is defined in file in json format. A Rule can contain 1 or more Rule sets which can in turn specify 
+This product is rule based. Each Rule is defined within file in json format. A Rule can contain 1 or more Rule sets which can in turn specify 
 1 or more atomic Rule operations. 
  
 Atomic rules can optionally specify query criteria (age, etc.) that is paired with a predicate (equals, greater than, etc.). These query criteria are used to 
@@ -72,6 +72,18 @@ A simple Rule example shown below has specified:
           "data_type": "FILE",
           "source": "/dest/some-new-data-location/some-data-file.ext",
           "destination": "/dest/some-newer-data-location"
+        },
+        {         
+          "name": "Test - Sweep copy test",
+          "description": "This test copies the directory contents of source to destination.",
+          "query_criteria_type": "BY_AGE",
+          "query_data_type": "INTEGER",
+          "query_data_value": 2,
+          "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
+          "action_type": "SWEEP_COPY",
+          "data_type": "DIRECTORY",
+          "source": "/source/root_directory",
+          "destination": "/dest/new_directory"
         }
       ]
     }
@@ -79,8 +91,8 @@ A simple Rule example shown below has specified:
 }
 ```
 
-There are GitHub actions to manage the code in this repo:
- - Pylint (minimum score of 9.95 to pass),
+There are GitHub actions to maintain code quality in this repo:
+ - Pylint (minimum score of 10/10 to pass),
  - Pytest (with code coverage),
  - Build/publish a Docker image.
 
