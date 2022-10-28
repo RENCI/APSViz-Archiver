@@ -11,7 +11,7 @@ FROM python:3.10-slim
 
 # update the image base
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y procps
+# RUN apt-get install -y procps
 
 # clear the apt cache
 RUN apt-get clean
