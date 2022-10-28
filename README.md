@@ -24,18 +24,19 @@ Archives file created by the various APSViz applications and processes.
 
 ## Description
 This product is designed to perform copy/move/remove operations on file or directory entities. Additional functionality 
-is implemented to sweep through all file/directory entities located within a directory. This product is intended to be run within a Kubernetes CronJob.
+is implemented to sweep through all file/directory entities located within a directory. This product is intended to be run within a Kubernetes 
+CronJob.
 
-This product is rule based. Each Rule is defined within file in json format. A Rule can contain 1 or more Rule sets which can in turn specify 
+This product is rule based. Each Rule is defined in json format. A Rule can contain 1 or more Rule sets which can in turn specify 
 1 or more atomic Rule operations. 
  
-Atomic rules can optionally specify query criteria (age, etc.) that is paired with a predicate (equals, greater than, etc.). These query criteria are used to 
-interrogate an entity prior to performing an operation.
+Atomic rules can optionally specify query criteria (age, etc.) that is paired with a predicate (equals, greater than, etc.). These query criteria
+are used to interrogate an entity prior to performing an operation.
 
 A simple Rule example shown below has specified:
  - A rule definition with details including a name, version and a description.
  - A rule Set that contains rule operations.
- - 2 rule operations for copy and move.
+ - 3 rule operations for copy, move and a directory sweep.
    - With each rule specifying a query criteria that will trigger the rule operation.
 
 ```
