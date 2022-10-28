@@ -33,11 +33,9 @@ def run_rule_file(rule_file: str) -> bool:
 
 
 if __name__ == '__main__':
-    """
-    main entry point for the rule run.
-    
-    input argument can be a singleton or a comma seperated list
-    """
+    # main entry point for the rule run.
+    # input argument can be a singleton or a comma seperated list
+
     # create a command line parser
     parser = argparse.ArgumentParser(description = 'help', formatter_class = argparse.RawDescriptionHelpFormatter)
 
@@ -52,6 +50,7 @@ if __name__ == '__main__':
 
     # execute the rule file(s)
     ret_val: bool = run_rule_file(args.filename)
+    # ret_val: bool = run_rule_file('test/test_files/test_criteria.rules2.json')
 
     # exit with pass/fail
     sys.exit(ret_val)
