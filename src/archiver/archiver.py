@@ -81,7 +81,13 @@ class APSVizArchiver:
                 rule_def_version = rule_defs['rule_definition_version']
 
                 self.logger.info('<---------- New Run: %s ---------->', infile)
-                self.logger.info('APSViz Archiver start. Name: %s, Version: %s', rule_def_name, rule_def_version)
+
+                # create a start message
+                start_msg = f'APSViz Archiver start. Name: {rule_def_name}, Version: {rule_def_version}'
+
+                # send/log the start message
+                self.utils.send_slack_msg(start_msg, 'slack_status_channel')
+                self.logger.info(start_msg)
 
                 # process the rule set
                 for rule_set in rule_defs['rule_sets']:
@@ -90,17 +96,20 @@ class APSVizArchiver:
 
                     # no failures get a short message
                     if run_stats['failed'] == 0:
-                        final_msg = 'status: Success.'
+                        final_msg = f"Status: {len(rule_set['rules'])} rule(s) succeeded."
 
                         # set the success flag
                         ret_val = True
                     else:
                         # show all results on failure
-                        final_msg = f"Failures detected: {len(rule_set['rules'])} rule(s) in set, {run_stats['moved']} Move rule(s), " \
+                        final_msg = f"Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, {run_stats['moved']} Move rule(s), " \
                                   f"{run_stats['copied']} copy rule(s), {run_stats['removed']} remove rule(s), " \
                                   f"{run_stats['swept']} sweep rule(s), {run_stats['failed']} failed rule(s)."
 
-                    self.logger.info("Rule set complete. Run %s", final_msg)
+                    self.logger.info("APSVix-Archiver Rule set %s complete. Run %s", rule_set['rule_set_name'], final_msg)
+
+                    # send out a slack of the details
+                    self.utils.send_slack_msg(final_msg, 'slack_status_channel')
 
                 self.logger.info('<---------- Run complete: %s ---------->\n', infile)
         except Exception:

@@ -49,9 +49,9 @@ class GeneralUtils:
         """
         sends a msg to the Slack channel
 
-        :param msg: the msg tpo be sent
+        :param msg: the msg to be sent
         :param channel: the Slack channel to post the message to
-        :param debug_mode: mode to indicate that this is a
+        :param debug_mode: mode to indicate that this is a no-op
         :return: nothing
         """
         # init the final msg
@@ -63,17 +63,17 @@ class GeneralUtils:
         # send the message to Slack if not in debug mode and not running locally
         if not debug_mode and self.system in ['Dev', 'Prod', 'AWS/EKS']:
             # determine the client based on the channel
-            if channel == self.slack_channels['slack_status_channel']:
+            if channel == 'slack_status_channel':
                 client = WebClient(token=os.getenv('SLACK_STATUS_TOKEN'))
             else:
                 client = WebClient(token=os.getenv('SLACK_ISSUES_TOKEN'))
 
             try:
                 # send the message
-                client.chat_postMessage(channel=channel, text=final_msg)
+                client.chat_postMessage(channel=self.slack_channels[channel], text=final_msg)
             except SlackApiError:
                 # log the error
-                self.logger.exception('Slack %s messaging failed. msg: %s', channel, final_msg)
+                self.logger.exception('Slack %s messaging failed. msg: %s', self.slack_channels[channel], final_msg)
 
     @staticmethod
     def load_rule_definition_file(infile: str) -> dict:
