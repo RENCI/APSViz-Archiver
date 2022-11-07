@@ -103,13 +103,14 @@ class APSVizArchiver:
                     # no failures get a short message
                     if run_stats['failed'] == 0:
                         # create a success message
-                        final_msg = f"Status: {len(rule_set['rules'])} rule(s) succeeded."
+                        final_msg = f"Rule set {rule_set['name']} Status: {len(rule_set['rules'])} rule(s) succeeded."
 
                         # set the success flag
                         ret_val = True
                     else:
                         # show all results on failure
-                        final_msg = f"Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, {run_stats['failed']} failed rule(s)."
+                        final_msg = f"Rule set {rule_set['name']} Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, " \
+                                    f"{run_stats['failed']} failed rule(s)."
 
                     # send out a slack of the details
                     self.utils.send_slack_msg(final_msg, 'slack_status_channel', self.debug)

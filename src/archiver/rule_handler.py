@@ -278,7 +278,8 @@ class RuleHandler:
                             # remove the directory
                             ret_val = self.rule_utils.remove_directory(rule, entity)
                     else:
-                        self.logger.debug('Rule action %s for data type: %s. %s -> %s failed to meet criteria.', rule.action_type, rule.data_type, rule.source, entity)
+                        self.logger.debug('Rule action %s for data type: %s. %s -> %s failed to meet criteria.', rule.action_type, rule.data_type,
+                                          rule.source, entity)
                         failed_met_criteria += 1
 
                 # if this is a file operation perform the action type
@@ -295,7 +296,8 @@ class RuleHandler:
                             # remove the directory
                             ret_val = self.rule_utils.remove_file(rule, entity)
                     else:
-                        self.logger.debug('Rule action %s for data type: %s: %s -> %s failed to meet criteria.', rule.action_type, rule.data_type, rule.source, entity)
+                        self.logger.debug('Rule action %s for data type: %s: %s -> %s failed to meet criteria.', rule.action_type, rule.data_type,
+                                          rule.source, entity)
                         failed_met_criteria += 1
 
         if failed_met_criteria > 0:
