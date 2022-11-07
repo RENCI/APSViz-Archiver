@@ -11,6 +11,7 @@
 """
 
 import datetime
+import logging
 
 from src.common.logger import LoggingUtil
 from src.archiver.rule_handler import RuleHandler
@@ -37,6 +38,12 @@ class APSVizArchiver:
 
         # create a logger
         self.logger = LoggingUtil.init_logging("APSVIZ.Archiver", level=log_level, line_format='medium', log_file_path=log_path)
+
+        # set debug mode based on the log level. a debug log level will turn off slack msgs
+        if log_level != logging.DEBUG:
+            self.debug = False
+        else:
+            self.debug = True
 
         # grab a reference to the utils class
         self.utils = GeneralUtils(self.logger)
@@ -86,8 +93,7 @@ class APSVizArchiver:
                 start_msg = f'APSViz Archiver start. Name: {rule_def_name}, Version: {rule_def_version}'
 
                 # send/log the start message
-                self.utils.send_slack_msg(start_msg, 'slack_status_channel')
-                self.logger.info(start_msg)
+                self.utils.send_slack_msg(start_msg, 'slack_status_channel', self.debug)
 
                 # process the rule set
                 for rule_set in rule_defs['rule_sets']:
@@ -96,20 +102,24 @@ class APSVizArchiver:
 
                     # no failures get a short message
                     if run_stats['failed'] == 0:
+                        # create a success message
                         final_msg = f"Status: {len(rule_set['rules'])} rule(s) succeeded."
 
                         # set the success flag
                         ret_val = True
                     else:
                         # show all results on failure
-                        final_msg = f"Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, {run_stats['moved']} Move rule(s), " \
-                                  f"{run_stats['copied']} copy rule(s), {run_stats['removed']} remove rule(s), " \
-                                  f"{run_stats['swept']} sweep rule(s), {run_stats['failed']} failed rule(s)."
-
-                    self.logger.info("APSVix-Archiver Rule set %s complete. Run %s", rule_set['rule_set_name'], final_msg)
+                        final_msg = f"Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, {run_stats['failed']} failed rule(s)."
 
                     # send out a slack of the details
-                    self.utils.send_slack_msg(final_msg, 'slack_status_channel')
+                    self.utils.send_slack_msg(final_msg, 'slack_status_channel', self.debug)
+
+                    # show all results on failure
+                    status_msg = f"Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, {run_stats['moved']} Move rule(s), " \
+                                 f"{run_stats['copied']} copy rule(s), {run_stats['removed']} remove rule(s), " \
+                                 f"{run_stats['swept']} sweep rule(s), {run_stats['failed']} failed rule(s)."
+
+                    self.logger.info("APSVix-Archiver Rule set %s complete. Run %s", rule_set['rule_set_name'], status_msg)
 
                 self.logger.info('<---------- Run complete: %s ---------->\n', infile)
         except Exception:
