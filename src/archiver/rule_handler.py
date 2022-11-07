@@ -249,6 +249,9 @@ class RuleHandler:
             # get a list of the contents of the source directory
             entities = os.listdir(rule.source)
 
+            # save the count
+            entity_count = len(entities)
+
             # for each item found
             for entity in entities:
                 # save the path to the entity
@@ -275,7 +278,7 @@ class RuleHandler:
                             # remove the directory
                             ret_val = self.rule_utils.remove_directory(rule, entity)
                     else:
-                        self.logger.debug('%s -> %s failed to meet criteria.', rule.source, entity)
+                        self.logger.debug('Rule action %s for data type: %s. %s -> %s failed to meet criteria.', rule.action_type, rule.data_type, rule.source, entity)
                         failed_met_criteria += 1
 
                 # if this is a file operation perform the action type
@@ -292,11 +295,12 @@ class RuleHandler:
                             # remove the directory
                             ret_val = self.rule_utils.remove_file(rule, entity)
                     else:
-                        self.logger.debug('%s -> %s failed to meet criteria.', rule.source, entity)
+                        self.logger.debug('Rule action %s for data type: %s: %s -> %s failed to meet criteria.', rule.action_type, rule.data_type, rule.source, entity)
                         failed_met_criteria += 1
 
         if failed_met_criteria > 0:
-            self.logger.debug("%s entity(ies) failed to meet criteria.", failed_met_criteria)
+            self.logger.debug("Rule action %s for data type: %s. %s of %s entity(ies) failed to meet criteria.", rule.action_type, rule.data_type,
+                              failed_met_criteria, entity_count)
 
         # return to the caller
         return ret_val
