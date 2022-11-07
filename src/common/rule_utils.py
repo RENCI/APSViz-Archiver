@@ -323,6 +323,12 @@ class RuleUtils:
         else:
             self.logger.error('Error: Invalid query criteria.')
 
+        # if this is a sweep operation ensure that the source directory exists
+        if rule.action_type in [ActionType.SWEEP_COPY, ActionType.SWEEP_REMOVE, ActionType.SWEEP_MOVE]:
+            if not os.path.exists(rule.source):
+                self.logger.warning('Warning: Source directory doesnt exist for sweep operation.')
+                ret_val = False
+
         # return to the caller
         return ret_val
 
@@ -338,11 +344,12 @@ class RuleUtils:
         ret_val: bool = False
 
         # get the age of the entity and convert to days
-        current_age = int((time.time() - entity_details.st_ctime)) / 86400
+        current_age = int((time.time() - entity_details.st_ctime) / 86400)
 
         # the data value for age is in days
-        # TESTING - target age = 0 - TESTING
         target_age = rule.query_data_value
+
+        self.logger.debug("Current age: %s, Rule predicate: %s, target age: %s", current_age, rule.predicate_type, target_age)
 
         # make the EQUALS comparison
         if rule.predicate_type == PredicateType.EQUALS:
