@@ -349,8 +349,6 @@ class RuleUtils:
         # the data value for age is in days
         target_age = rule.query_data_value
 
-        self.logger.debug("Current age: %s, Rule predicate: %s, target age: %s", current_age, rule.predicate_type, target_age)
-
         # make the EQUALS comparison
         if rule.predicate_type == PredicateType.EQUALS:
             # compare the age vs. the age to trigger the rule
@@ -378,6 +376,9 @@ class RuleUtils:
                 ret_val = True
         else:
             self.logger.error("Error: Unspecified predicate type.")
+
+        self.logger.info("%s - Current age: %s, Rule predicate: %s, target age: %s", 'Success' if ret_val else 'Failed.', current_age,
+                         rule.predicate_type, target_age)
 
         # return to the caller
         return ret_val
@@ -409,8 +410,8 @@ class RuleUtils:
         :return:
         """
         # convert values that are enum types
-        rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] \
-            if rule['query_criteria_type'] is not None else QueryCriteriaType.NONE
+        rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] if rule['query_criteria_type'] is not None \
+            else QueryCriteriaType.NONE
 
         rule['query_data_type'] = QueryDataType[rule['query_data_type']] if rule['query_data_type'] is not None else QueryDataType.NONE
         rule['predicate_type'] = PredicateType[rule['predicate_type']] if rule['predicate_type'] is not None else PredicateType.NONE
