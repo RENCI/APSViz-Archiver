@@ -241,6 +241,9 @@ class RuleHandler:
         ret_val: bool = True
         failed_met_criteria: int = 0
 
+        # init the entity count
+        entity_count = 0
+
         # check to see if execution params are populated
         validated = self.rule_utils.validate_criteria_definition(rule)
 
@@ -248,9 +251,6 @@ class RuleHandler:
         if validated:
             # get a list of the contents of the source directory
             entities = os.listdir(rule.source)
-
-            # save the count
-            entity_count = len(entities)
 
             # for each item found
             for entity in entities:
@@ -266,6 +266,9 @@ class RuleHandler:
 
                 # if this is a directory operation perform the action type
                 if rule.data_type == DataType.DIRECTORY and S_ISDIR(entity_details.st_mode):
+                    # increment the count
+                    entity_count += 1
+
                     # does the entity meet criteria
                     if self.rule_utils.meets_criteria(rule, entity_details):
                         if rule.action_type == ActionType.SWEEP_MOVE:
@@ -278,12 +281,17 @@ class RuleHandler:
                             # remove the directory
                             ret_val = self.rule_utils.remove_directory(rule, entity)
                     else:
-                        self.logger.debug('Rule action %s for data type: %s. %s -> %s failed to meet criteria.', rule.action_type, rule.data_type,
-                                          rule.source, entity)
+                        self.logger.debug('%s data action %s: Entity %s failed to meet criteria in %s.', rule.data_type.name, rule.action_type.name,
+                                          entity, rule.source)
+
+                        # increment the failed criteria counter
                         failed_met_criteria += 1
 
                 # if this is a file operation perform the action type
                 elif rule.data_type == DataType.FILE and not S_ISDIR(entity_details.st_mode):
+                    # increment the count
+                    entity_count += 1
+
                     # does the entity meet criteria
                     if self.rule_utils.meets_criteria(rule, entity_details):
                         if rule.action_type == ActionType.SWEEP_MOVE:
@@ -296,12 +304,15 @@ class RuleHandler:
                             # remove the directory
                             ret_val = self.rule_utils.remove_file(rule, entity)
                     else:
-                        self.logger.debug('Rule action %s for data type: %s: %s -> %s failed to meet criteria.', rule.action_type, rule.data_type,
-                                          rule.source, entity)
+                        self.logger.debug('%s data action %s: Entity %s failed to meet criteria in %s.', rule.data_type.name, rule.action_type.name,
+                                          entity, rule.source)
+
+                        # increment the failed criteria counter
                         failed_met_criteria += 1
 
+        # if there were any that failed report the details
         if failed_met_criteria > 0:
-            self.logger.debug("Rule action %s for data type: %s. %s of %s entity(ies) failed to meet criteria.", rule.action_type, rule.data_type,
+            self.logger.debug("%s data action %s result: %s of %s entity(ies) failed to meet criteria.", rule.data_type.name, rule.action_type.name,
                               failed_met_criteria, entity_count)
 
         # return to the caller
