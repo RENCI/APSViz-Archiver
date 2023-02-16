@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-    Class LoggingUtil - Logging utilities.
+    Logging utilities.
 
     Author: Phil Owen, 10/19/2022
 """
