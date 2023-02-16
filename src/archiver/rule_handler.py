@@ -66,19 +66,24 @@ class RuleHandler:
         # for each rule in the rule set
         for rule in rule_set['rules']:
             # convert elements to their equivalent types
-            the_rule: namedtuple = self.rule_utils.convert_to_enum_types(rule)
+            the_rule: namedtuple = self.rule_utils.validate_and_convert_to_rule(rule)
 
-            # apply the rules to the data, get back some stats
-            process_stats: dict = self.process_rule(the_rule)
+            # if we get back a valid rule
+            if the_rule:
+                # apply the rules to the data, get back some stats
+                process_stats: dict = self.process_rule(the_rule)
 
-            # update the rule set stats
-            ret_val['moved'] += process_stats['moved']
-            ret_val['copied'] += process_stats['copied']
-            ret_val['removed'] += process_stats['removed']
-            ret_val['swept'] += process_stats['swept']
-            ret_val['failed'] += process_stats['failed']
+                # update the rule set stats
+                ret_val['moved'] += process_stats['moved']
+                ret_val['copied'] += process_stats['copied']
+                ret_val['removed'] += process_stats['removed']
+                ret_val['swept'] += process_stats['swept']
+                ret_val['failed'] += process_stats['failed']
+            else:
+                self.logger.error('Error: The rule "%s" was not the expected type or is missing data.', rule.name)
+                ret_val['failed'] += 1
 
-        # return to the caller
+                # return to the caller
         return ret_val
 
     def process_rule(self, rule: RuleUtils.Rule) -> dict:
@@ -92,46 +97,40 @@ class RuleHandler:
         stats: dict = {'moved': 0, 'copied': 0, 'removed': 0, 'swept': 0, 'failed': 0, }
 
         self.logger.info("Rule start. Name: %s, action type: %s.", rule.name, rule.action_type)
+        self.logger.debug('Rule data source: %s, dest: %s, data_type: %s.', rule.source, rule.destination, rule.data_type)
 
-        # confirm the expected input and output data are populated
-        if self.rule_utils.validate_rule_data(rule):
-            self.logger.debug('Rule data source: %s, dest: %s, data_type: %s.', rule.source, rule.destination, rule.data_type)
-
-            # select the operation by based on the trigger type
-            if rule.action_type == ActionType.MOVE:
-                # run the action handler, get the result
-                if self.move_data_action(rule):
-                    stats['moved'] += 1
-                else:
-                    stats['failed'] += 1
-
-            elif rule.action_type == ActionType.COPY:
-                # run the action handler, get the result
-                if self.copy_data_action(rule):
-                    stats['copied'] += 1
-                else:
-                    stats['failed'] += 1
-
-            elif rule.action_type == ActionType.REMOVE:
-                # run the action handler, get the result
-                if self.remove_data_action(rule):
-                    stats['removed'] += 1
-                else:
-                    stats['failed'] += 1
-
-            elif rule.action_type in (ActionType.SWEEP_COPY, ActionType.SWEEP_MOVE, ActionType.SWEEP_REMOVE):
-                # run the action handler, get the result
-                if self.sweep_action(rule):
-                    stats['swept'] += 1
-                else:
-                    stats['failed'] += 1
-            # unknown rule action type
+        # select the operation by based on the trigger type
+        if rule.action_type == ActionType.MOVE:
+            # run the action handler, get the result
+            if self.move_data_action(rule):
+                stats['moved'] += 1
             else:
                 stats['failed'] += 1
-                self.logger.error('Error: The rule "%s" with action type %s is invalid.', rule.name, rule.action_type.value)
+
+        elif rule.action_type == ActionType.COPY:
+            # run the action handler, get the result
+            if self.copy_data_action(rule):
+                stats['copied'] += 1
+            else:
+                stats['failed'] += 1
+
+        elif rule.action_type == ActionType.REMOVE:
+            # run the action handler, get the result
+            if self.remove_data_action(rule):
+                stats['removed'] += 1
+            else:
+                stats['failed'] += 1
+
+        elif rule.action_type in (ActionType.SWEEP_COPY, ActionType.SWEEP_MOVE, ActionType.SWEEP_REMOVE):
+            # run the action handler, get the result
+            if self.sweep_action(rule):
+                stats['swept'] += 1
+            else:
+                stats['failed'] += 1
+        # unknown rule action type
         else:
             stats['failed'] += 1
-            self.logger.error('Error: The rule "%s" data source was not the expected type or does not exist.', rule.name)
+            self.logger.error('Error: The rule "%s" with action type %s is invalid.', rule.name, rule.action_type.value)
 
         # return the stats to the caller
         return stats
