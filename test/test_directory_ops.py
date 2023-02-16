@@ -25,24 +25,15 @@ def test_copy_directory():
     dest_dir: str = os.path.join(output_path, 'dir1/')
 
     # create a test rule dict
-    test_rule: dict = {
-          "name": "Test - Copy directory",
-          "description": "Directory copy.",
-          "query_criteria_type": None,
-          "query_data_type": None,
-          "query_data_value": None,
-          "predicate_type": None,
-          "action_type": "COPY",
-          "data_type": "DIRECTORY",
-          "source": source_dir,
-          "destination": dest_dir
-        }
+    test_rule: dict = {'name': 'Test - Copy directory', 'description': 'Directory copy.', 'query_criteria_type': None, 'query_data_type': None,
+                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY', 'data_type': 'DIRECTORY',
+                       'source': source_dir, 'destination': dest_dir}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['copied'] == 1 and process_stats["failed"] == 0
+    assert process_stats['copied'] == 1 and process_stats['failed'] == 0
     assert os.path.isfile(os.path.join(dest_dir, 'test_file.txt'))
 
 
@@ -57,15 +48,15 @@ def test_move_directory():
     dest_dir: str = os.path.join(output_path, 'dir2/')
 
     # create a test rule
-    test_rule: dict = {"name": "Test - Move file", "description": "Move file", "query_criteria_type": None, "query_data_type": None,
-                       "query_data_value": None, "predicate_type": None, "action_type": "MOVE", "data_type": "DIRECTORY", "source": source_dir,
-                       "destination": dest_dir}
+    test_rule: dict = {'name': 'Test - Move file', 'description': 'Move file', 'query_criteria_type': None, 'query_data_type': None,
+                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'MOVE', 'data_type': 'DIRECTORY',
+                       'source': source_dir, 'destination': dest_dir}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['moved'] == 1 and process_stats["failed"] == 0
+    assert process_stats['moved'] == 1 and process_stats['failed'] == 0
     assert os.path.exists(dest_dir)
     assert not os.path.exists(source_dir)
 
@@ -80,13 +71,33 @@ def test_remove_directory():
     source_dir: str = os.path.join(output_path, 'dir2/')
 
     # create a test rule
-    test_rule: dict = {"name": "Test - Remove file", "description": "Remove file", "query_criteria_type": None, "query_data_type": None,
-                       "query_data_value": None, "predicate_type": None, "action_type": "REMOVE", "data_type": "DIRECTORY", "source": source_dir,
-                       "destination": None}
+    test_rule: dict = {'name': 'Test - Remove file', 'description': 'Remove file', 'query_criteria_type': None, 'query_data_type': None,
+                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'REMOVE', 'data_type': 'DIRECTORY',
+                       'source': source_dir, 'destination': None}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['removed'] == 1 and process_stats["failed"] == 0
+    assert process_stats['removed'] == 1 and process_stats['failed'] == 0
+    assert not os.path.exists(source_dir)
+
+
+def test_remove_directory_and_geoserver_coverage_store():
+    # create a directory for testing
+    test_copy_directory()
+
+    # get the paths to the test directories
+    source_dir: str = os.path.join(output_path, 'dir2/')
+
+    # create a test rule
+    test_rule: dict = {'name': 'Test - Remove geoserver layer and directory', 'description': 'Remove a GeoServer layer and directory',
+                       'query_criteria_type': None, 'query_data_type': None, 'query_data_value': None, 'predicate_type': None,
+                       'sync_system_type': 'GEOSERVER', 'action_type': 'REMOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None}
+
+    # run the rule
+    process_stats = run_rule(test_rule)
+
+    # interrogate the result
+    assert process_stats['removed'] == 1 and process_stats['failed'] == 0
     assert not os.path.exists(source_dir)
