@@ -13,9 +13,21 @@
 from enum import Enum
 
 
+class SyncSystemType(int, Enum):
+    """
+    Enum class that defines the system that needs to be synchronized
+    with a copy/move/remove operation
+    """
+    APSVIZ_DB = 1
+    GEOSERVER = 2
+    ASGS_DB = 3
+    OBS_MOD_DB = 4
+    NONE = 99
+
+
 class QueryCriteriaType(int, Enum):
     """
-    Enum Class that defines the rule query criteria
+    Enum Class that defines the rule query criteria types
     """
     BY_AGE = 1
     # BY_NAME = 2
