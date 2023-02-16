@@ -5,13 +5,13 @@
 # SPDX-License-Identifier: MIT
 
 """
-    APSViz Archiver - Test copy operations
+    Test file operations
 
     Author: Phil Owen, 10/23/2022
 """
 import os.path
 
-from common_funcs import input_path, output_path, cleanup, run_rule
+from test_utils import input_path, output_path, cleanup, run_rule
 
 
 def test_copy_file():
@@ -30,14 +30,14 @@ def test_copy_file():
 
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Copy Test file', 'description': '', 'query_criteria_type': None, 'query_data_type': None,
-                       'query_data_value': 1, 'predicate_type': None, 'action_type': 'COPY', 'data_type': 'FILE', 'source': source,
-                       'destination': dest}
+                       'query_data_value': 1, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY', 'data_type': 'FILE',
+                       'source': source, 'destination': dest}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['copied'] == 1 and process_stats["failed"] == 0
+    assert process_stats['copied'] == 1 and process_stats['failed'] == 0
     assert os.path.isfile(os.path.join(output_path, 'file_dir1/test_file.txt'))
 
     ###########
@@ -49,15 +49,15 @@ def test_copy_file():
     dest: str = os.path.join(output_path, 'file_dir1/new_test_file.txt')
 
     # create a test rule dict
-    test_rule: dict = {"name": "Test - Copying Test file with different name", "description": "", "query_criteria_type": None,
-                       "query_data_type": None, "query_data_value": 1, "predicate_type": None, "action_type": "COPY", "data_type": "FILE",
-                       "source": source, "destination": dest}
+    test_rule: dict = {'name': 'Test - Copying Test file with different name', 'description': '', 'query_criteria_type': None,
+                       'query_data_type': None, 'query_data_value': 1, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY',
+                       'data_type': 'FILE', 'source': source, 'destination': dest}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['copied'] == 1 and process_stats["failed"] == 0
+    assert process_stats['copied'] == 1 and process_stats['failed'] == 0
     assert os.path.isfile(os.path.join(output_path, 'file_dir1/new_test_file.txt'))
 
 
@@ -72,15 +72,15 @@ def test_move_file():
     dest: str = os.path.join(output_path, 'file_dir2/')
 
     # create a test rule
-    test_rule: dict = {"name": "Test - Move file", "description": "Move file", "query_criteria_type": None, "query_data_type": None,
-                       "query_data_value": None, "predicate_type": None, "action_type": "MOVE", "data_type": "FILE", "source": source,
-                       "destination": dest}
+    test_rule: dict = {'name': 'Test - Move file', 'description': 'Move file', 'query_criteria_type': None, 'query_data_type': None,
+                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'MOVE', 'data_type': 'FILE',
+                       'source': source, 'destination': dest}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['moved'] == 1 and process_stats["failed"] == 0
+    assert process_stats['moved'] == 1 and process_stats['failed'] == 0
     assert os.path.isfile(os.path.join(output_path, 'file_dir2/test_file.txt'))
 
 
@@ -94,15 +94,15 @@ def test_remove_file():
     source: str = os.path.join(output_path, 'file_dir2/test_file.txt')
 
     # create a test rule
-    test_rule: dict = {"name": "Test - Remove file", "description": "Remove file", "query_criteria_type": None, "query_data_type": None,
-                       "query_data_value": None, "predicate_type": None, "action_type": "REMOVE", "data_type": "FILE", "source": source,
-                       "destination": None}
+    test_rule: dict = {'name': 'Test - Remove file', 'description': 'Remove file', 'query_criteria_type': None, 'query_data_type': None,
+                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'REMOVE', 'data_type': 'FILE',
+                       'source': source, 'destination': None}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['removed'] == 1 and process_stats["failed"] == 0
+    assert process_stats['removed'] == 1 and process_stats['failed'] == 0
     assert not os.path.exists(os.path.join(output_path, 'file_dir2/test_file.txt'))
 
 
