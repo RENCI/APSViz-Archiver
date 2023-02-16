@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-    APSViz Archiver - Test directory sweep operations
+    Test directory sweep operations
 
     Author: Phil Owen, 10/23/2022
 """
@@ -34,15 +34,15 @@ def test_copy_file_sweep():
     dest_dir: str = os.path.join(output_path, 'sweep_dir2/')
 
     # create a test rule
-    test_rule: dict = {"name": "Test - Copy file Sweep BY_AGE", "description": "File copy BY_AGE.", "query_criteria_type": "BY_AGE",
-                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "LESS_THAN", "action_type": "SWEEP_COPY",
-                       "data_type": "FILE", "source": source_dir, "destination": dest_dir}
+    test_rule: dict = {'name': 'Test - Copy file Sweep BY_AGE', 'description': 'File copy BY_AGE.', 'query_criteria_type': 'BY_AGE',
+                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
+                       'action_type': 'SWEEP_COPY', 'data_type': 'FILE', 'source': source_dir, 'destination': dest_dir}
 
     # run the rule
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['swept'] == 1 and process_stats["failed"] == 0
+    assert process_stats['swept'] == 1 and process_stats['failed'] == 0
     assert os.path.exists(os.path.join(output_path, 'sweep_dir1', 'sweep_sub/'))
 
     # get a list of the contents of the source directory
@@ -64,9 +64,9 @@ def test_move_file_sweep():
     dest_dir: str = os.path.join(output_path, 'sweep_dir3/')
 
     # create a test rule
-    test_rule: dict = {"name": "Test - Move file Sweep BY_AGE", "description": "File move BY_AGE.", "query_criteria_type": "BY_AGE",
-                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "LESS_THAN", "action_type": "SWEEP_MOVE",
-                       "data_type": "FILE", "source": source_dir, "destination": dest_dir}
+    test_rule: dict = {'name': 'Test - Move file Sweep BY_AGE', 'description': 'File move BY_AGE.', 'query_criteria_type': 'BY_AGE',
+                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
+                       'action_type': 'SWEEP_MOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': dest_dir}
 
     # get a list of the contents of the source directory
     entities = os.listdir(source_dir)
@@ -75,7 +75,7 @@ def test_move_file_sweep():
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['swept'] == 1 and process_stats["failed"] == 0
+    assert process_stats['swept'] == 1 and process_stats['failed'] == 0
     assert os.path.exists(dest_dir)
 
     # make sure all the files were transferred
@@ -93,9 +93,9 @@ def test_remove_file_sweep():
     source_dir: str = os.path.join(output_path, 'sweep_dir3/')
 
     # create a test rule
-    test_rule: dict = {"name": "Test - Remove files sweep BY_AGE", "description": "Remove files BY_AGE.", "query_criteria_type": "BY_AGE",
-                       "query_data_type": "INTEGER", "query_data_value": 1, "predicate_type": "LESS_THAN",
-                       "action_type": "SWEEP_REMOVE", "data_type": "FILE", "source": source_dir, "destination": None}
+    test_rule: dict = {'name': 'Test - Remove files sweep BY_AGE', 'description': 'Remove files BY_AGE.', 'query_criteria_type': 'BY_AGE',
+                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
+                       'action_type': 'SWEEP_REMOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': None}
 
     # get a list of the contents of the source directory
     entities = os.listdir(source_dir)
@@ -104,7 +104,7 @@ def test_remove_file_sweep():
     process_stats = run_rule(test_rule)
 
     # interrogate the result
-    assert process_stats['swept'] == 1 and process_stats["failed"] == 0
+    assert process_stats['swept'] == 1 and process_stats['failed'] == 0
     assert os.path.exists(source_dir)
 
     # make sure all the files were removed
