@@ -15,7 +15,8 @@ import shutil
 import time
 
 from collections import namedtuple
-from src.common.rule_enums import DataType, QueryCriteriaType, PredicateType, ActionType, QueryDataType
+from src.common.rule_enums import DataType, QueryCriteriaType, PredicateType, ActionType, QueryDataType, SyncSystemType
+from src.common.geoserver_utils import GeoServerUtils
 from src.common.logger import LoggingUtil
 
 
@@ -25,7 +26,7 @@ class RuleUtils:
     """
     # define a named tuple where a rule can be housed
     Rule: namedtuple = namedtuple('Rule', ['name', 'description', 'query_criteria_type', 'query_data_type', 'query_data_value', 'predicate_type',
-                                           'action_type', 'data_type', 'source', 'destination'])
+                                           'sync_system_type', 'action_type', 'data_type', 'source', 'destination'])
 
     """
     Rule utility methods used for components in this project.
@@ -66,12 +67,17 @@ class RuleUtils:
 
             # append the optional file name if exists
             if opt_name:
-                final_path = os.path.join(rule.source, opt_name)
-            else:
-                final_path = rule.source
+                rule.source = os.path.join(rule.source, opt_name)
+
+            # log the targets
+            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
 
             # preform the move
-            shutil.move(final_path, rule.destination)
+            shutil.move(rule.source, rule.destination)
+
+            # is there a external system sync that has to occur
+            if rule.sync_system_type is not None:
+                ret_val = self.handle_system_sync(rule)
 
             # set the return value
             ret_val = True
@@ -91,6 +97,32 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
+    def handle_system_sync(self, rule: Rule):
+        """
+        Handles a system sync operation.
+
+        :param rule:
+        :return:
+        """
+        # init the return value
+        success = True
+
+        # what kind of system sync are we doing
+        if rule.sync_system_type == SyncSystemType.GEOSERVER:
+            # what kind of operation was this
+            if rule.action_type == ActionType.REMOVE:
+                # get a handle to the geoserver utils
+                geo_svr: GeoServerUtils = GeoServerUtils()
+
+                # get the layer name. it should be the last part of the source
+                layer_name = ''
+
+                # remove the layer
+                success: bool = geo_svr.remove_layer(layer_name)
+
+        # return the result
+        return success
+
     def move_directory(self, rule: Rule, opt_name: str = None) -> bool:
         """
         Moves the directory from source to destination
@@ -106,16 +138,15 @@ class RuleUtils:
             # is there more to this source sweep operation
             if opt_name:
                 # append the sweep dir
-                source = os.path.join(rule.source, opt_name)
-                destination = os.path.join(rule.destination, opt_name)
-            else:
-                # just use the source
-                source = rule.source
-                destination = rule.destination
+                rule.source = os.path.join(rule.source, opt_name)
+                rule.destination = os.path.join(rule.destination, opt_name)
+
+            # log the targets
+            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
 
             # if the path exists the source directory is moved to the dest
             # if os.path.exists(destination):
-            shutil.move(source, destination)
+            shutil.move(rule.source, rule.destination)
             # else the source directory is renamed to the destination directory
             # else:
             #     os.rename(source, destination)
@@ -158,18 +189,19 @@ class RuleUtils:
 
             # append the optional file name if exists
             if opt_name:
-                final_path = os.path.join(rule.source, opt_name)
-            else:
-                final_path = rule.source
+                rule.source = os.path.join(rule.source, opt_name)
+
+            # log the targets
+            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
 
             # perform the file copy operation
-            shutil.copy(final_path, rule.destination)
+            shutil.copy(rule.source, rule.destination)
 
             # set the return value
             ret_val = True
 
         except FileExistsError:
-            self.logger.exception('Error: File % already exists.', rule.destination)
+            self.logger.exception('Error: File %s already exists.', rule.destination)
         except Exception:
             self.logger.exception('Error: General exception detected during a file copy.')
 
@@ -191,15 +223,14 @@ class RuleUtils:
             # is there more to this source sweep operation
             if opt_name:
                 # append the sweep dir
-                source = os.path.join(rule.source, opt_name)
-                destination = os.path.join(rule.destination, opt_name)
-            else:
-                # just use the source
-                source = rule.source
-                destination = rule.destination
+                rule.source = os.path.join(rule.source, opt_name)
+                rule.destination = os.path.join(rule.destination, opt_name)
+
+            # log the targets
+            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
 
             # copy the directory
-            shutil.copytree(source, destination, dirs_exist_ok=True)
+            shutil.copytree(rule.source, rule.destination, dirs_exist_ok=True)
 
             # set the return value
             ret_val = True
@@ -228,12 +259,13 @@ class RuleUtils:
         try:
             # append the optional file name if exists
             if opt_name:
-                final_path = os.path.join(rule.source, opt_name)
-            else:
-                final_path = rule.source
+                rule.source = os.path.join(rule.source, opt_name)
+
+            # log the targets
+            self.logger.debug('Source: %s', rule.source)
 
             # perform the file operation
-            os.remove(final_path)
+            os.remove(rule.source)
 
             # set the return value
             ret_val = True
@@ -258,47 +290,19 @@ class RuleUtils:
         try:
             # append the optional file name if exists
             if opt_name:
-                final_path = os.path.join(rule.source, opt_name)
-            else:
-                final_path = rule.source
+                rule.source = os.path.join(rule.source, opt_name)
+
+            # log the targets
+            self.logger.debug('Source: %s', rule.source)
 
             # perform the directory removal operation
-            shutil.rmtree(final_path)
+            shutil.rmtree(rule.source)
 
             # set the return value
             ret_val = True
 
         except Exception:
             self.logger.exception('Error: General exception detected during a file remove.')
-
-        # return to the caller
-        return ret_val
-
-    def validate_rule_data(self, rule: Rule) -> bool:
-        """
-        confirms the data is of the expected type and exists.
-        Also creates the destination directory if it doesn't exist
-
-        :param rule:
-        :return:
-        """
-        # init the return value
-        ret_val: bool = False
-
-        try:
-            # validate the data exists and matches the expected type
-            if rule.data_type == DataType.FILE and os.path.isfile(rule.source):
-                # everything os ok so far
-                ret_val = True
-            elif rule.data_type == DataType.DIRECTORY and not os.path.isfile(rule.source):
-                # everything os ok so far
-                ret_val = True
-            elif rule.action_type in [ActionType.SWEEP_COPY, ActionType.SWEEP_MOVE, ActionType.SWEEP_REMOVE] and not os.path.isfile(rule.source):
-                ret_val = True
-            else:
-                self.logger.error('Error: Source data does not exist or does not match the expected type.')
-        except Exception:
-            self.logger.exception('Validation error.')
 
         # return to the caller
         return ret_val
@@ -316,6 +320,7 @@ class RuleUtils:
         # no criteria pass through
         if rule.query_criteria_type == QueryCriteriaType.NONE:
             ret_val = True
+        # by age needs the data type and predicate type verified
         elif rule.query_criteria_type == QueryCriteriaType.BY_AGE:
             # make sure all the data exists
             if rule.query_data_type and rule.predicate_type:
@@ -325,6 +330,7 @@ class RuleUtils:
 
         # if this is a sweep operation ensure that the source directory exists
         if rule.action_type in [ActionType.SWEEP_COPY, ActionType.SWEEP_REMOVE, ActionType.SWEEP_MOVE]:
+            # warn if the source doesn't exist
             if not os.path.exists(rule.source):
                 self.logger.warning('Warning: Source directory doesnt exist for sweep operation.')
                 ret_val = False
@@ -348,6 +354,10 @@ class RuleUtils:
 
         # the data value for age is in days
         target_age = rule.query_data_value
+
+        # log the targets
+        self.logger.debug('Source: %s, destination: %s, current age: %s, target age: %s, predicate: %s', rule.source, rule.destination, current_age,
+                          target_age, rule.predicate_type)
 
         # make the EQUALS comparison
         if rule.predicate_type == PredicateType.EQUALS:
@@ -377,8 +387,8 @@ class RuleUtils:
         else:
             self.logger.error("Error: Unspecified predicate type.")
 
-        self.logger.info("%s - Current age: %s, Rule predicate: %s, target age: %s", 'Success' if ret_val else 'Failed.', current_age,
-                         rule.predicate_type, target_age)
+        self.logger.info("%s - Source: %s, destination: %s, current age: %s, target age: %s, predicate: %s", 'Success' if ret_val else 'Failed.',
+                         rule.source, rule.destination, current_age, target_age, rule.predicate_type)
 
         # return to the caller
         return ret_val
@@ -402,24 +412,68 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    @staticmethod
-    def convert_to_enum_types(rule: dict) -> namedtuple:
+    def validate_and_convert_to_rule(self, rule: dict) -> namedtuple:
         """
-        Converts rule elements to their enum equivalents.
+        Validatges and converts json rule elements to a Rule named tuple.
 
         :return:
         """
-        # convert values that are enum types
-        rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] if rule['query_criteria_type'] is not None \
-            else QueryCriteriaType.NONE
+        # init the return value
+        the_rule: namedtuple = None
 
-        rule['query_data_type'] = QueryDataType[rule['query_data_type']] if rule['query_data_type'] is not None else QueryDataType.NONE
-        rule['predicate_type'] = PredicateType[rule['predicate_type']] if rule['predicate_type'] is not None else PredicateType.NONE
-        rule['action_type'] = ActionType[rule['action_type']] if rule['action_type'] is not None else ActionType.NONE
-        rule['data_type'] = DataType[rule['data_type']] if rule['data_type'] is not None else DataType.NONE
+        # flag to indicate success
+        success = True
 
-        # convert rule to a named tuple
-        the_rule = RuleUtils.Rule(**rule)
+        try:
+            # ensure that all elements are in the data
+            for item in self.Rule._fields:
+                # if the element was not found
+                if item not in rule:
+                    self.logger.error('Error: Rule element %s not found in rule definition.', item)
+
+                    # set the failure flag
+                    success = False
+
+                    # no need to continue
+                    break
+
+            # if things are ok so far
+            if success:
+                # convert values that are enum types
+                rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] if rule[
+                                                                                                    'query_criteria_type'] is not None else QueryCriteriaType.NONE
+                rule['query_data_type'] = QueryDataType[rule['query_data_type']] if rule['query_data_type'] is not None else QueryDataType.NONE
+                rule['predicate_type'] = PredicateType[rule['predicate_type']] if rule['predicate_type'] is not None else PredicateType.NONE
+                rule['sync_system_type'] = SyncSystemType[rule['sync_system_type']] if rule['sync_system_type'] is not None else SyncSystemType.NONE
+                rule['action_type'] = ActionType[rule['action_type']] if rule['action_type'] is not None else ActionType.NONE
+                rule['data_type'] = DataType[rule['data_type']] if rule['data_type'] is not None else DataType.NONE
+
+                # convert rule to a named tuple
+                the_rule = RuleUtils.Rule(**rule)
+
+                # continue to check for more rule conformance
+                if success:
+                    # reset the success flag for the next validation
+                    success = False
+
+                    # validate the data exists and matches the expected type
+                    if the_rule.data_type == DataType.FILE and os.path.isfile(the_rule.source):
+                        # everything os ok so far
+                        success = True
+                    elif the_rule.data_type == DataType.DIRECTORY and not os.path.isfile(the_rule.source):
+                        # everything is ok so far
+                        success = True
+                    elif the_rule.action_type in [ActionType.SWEEP_COPY, ActionType.SWEEP_MOVE, ActionType.SWEEP_REMOVE] and not os.path.isfile(
+                            the_rule.source):
+                        success = True
+                    else:
+                        self.logger.error('Error: Rule data missing or does not match the expected type.')
+
+        except Exception:
+            self.logger.exception('Exception validating or converting rule input')
+
+            # set the failure flag
+            success = False
 
         # return to the caller
-        return the_rule
+        return the_rule if success else None
