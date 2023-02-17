@@ -17,6 +17,7 @@ from src.common.logger import LoggingUtil
 from src.archiver.rule_handler import RuleHandler
 from src.common.rule_utils import RuleUtils
 from src.common.general_utils import GeneralUtils
+from src.common.geoserver_utils import GeoServerUtils
 
 
 class APSVizArchiver:
@@ -45,12 +46,16 @@ class APSVizArchiver:
         else:
             self.debug = True
 
-        # grab a reference to the utils class
+        # grab a reference to the general utils class
         self.utils = GeneralUtils(self.logger)
 
+        # grab a reference to the GeoServer utils class
+        self.geo_utils = GeoServerUtils(self.logger)
+
         # grab a reference to the data handlers
-        # self.data_handlers = [{'data_name': 'GeoServer', 'data_handler': GeoserverTools(self.logger)},
-        #                       {'data_name': 'THREDDS', 'data_handler': ThreddsTools(self.logger)}]
+        self.data_handlers = [{'data_name': 'GeoServer', 'data_handler': GeoServerUtils(self.logger)},
+                              # {'data_name': 'TDS', 'data_handler': ThreddsTools(self.logger)}
+                              ]
 
         # grab a reference to the thredds tools
         self.rule_handler = RuleHandler(self.logger)
@@ -112,15 +117,15 @@ class APSVizArchiver:
                         final_msg = f"Rule set {rule_set['rule_set_name']} Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, " \
                                     f"{run_stats['failed']} failed rule(s)."
 
+                        # show all results on failure
+                        status_msg = f"Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, {run_stats['moved']} Move rule(s), " \
+                                     f"{run_stats['copied']} copy rule(s), {run_stats['removed']} remove rule(s), " \
+                                     f"{run_stats['swept']} sweep rule(s), {run_stats['failed']} failed rule(s)."
+
+                        self.logger.info("APSVix-Archiver Rule set %s complete. Run %s", rule_set['rule_set_name'], status_msg)
+
                     # send out a slack of the details
                     self.utils.send_slack_msg(final_msg, 'slack_status_channel', self.debug)
-
-                    # show all results on failure
-                    status_msg = f"Status: Failures detected - {len(rule_set['rules'])} rule(s) in set, {run_stats['moved']} Move rule(s), " \
-                                 f"{run_stats['copied']} copy rule(s), {run_stats['removed']} remove rule(s), " \
-                                 f"{run_stats['swept']} sweep rule(s), {run_stats['failed']} failed rule(s)."
-
-                    self.logger.info("APSVix-Archiver Rule set %s complete. Run %s", rule_set['rule_set_name'], status_msg)
 
                 self.logger.info('<---------- Run complete: %s ---------->\n', infile)
         except Exception:
