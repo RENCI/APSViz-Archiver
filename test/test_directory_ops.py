@@ -11,7 +11,7 @@
 """
 import os.path
 
-from common_funcs import input_path, output_path, run_rule
+from test_utils import input_path, output_path, run_rule
 
 
 def test_copy_directory():

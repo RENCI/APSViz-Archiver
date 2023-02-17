@@ -11,7 +11,7 @@
 """
 import os.path
 
-from common_funcs import output_path, sweeps_init, cleanup, run_rule
+from test_utils import output_path, sweeps_init, cleanup, run_rule
 
 
 def test_init():
