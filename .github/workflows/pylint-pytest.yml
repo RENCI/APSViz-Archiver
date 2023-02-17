@@ -27,12 +27,14 @@ jobs:
         uses: actions/checkout@v2
 
       # get the secrets for geoserver
-      - uses: oNaiPs/secrets-to-env-action@v1
-        with:
-          secrets: ${{ toJSON(secrets) }}
-          include: GEOSERVER_*
       - run:
-          echo "Value of GEOSERVER_WORKSPACE: $GEOSERVER_WORKSPACE"
+          echo "Value of GEOSERVER_HOST: $GEOSERVER_HOST"
+        env:
+          GEOSERVER_HOST: ${{ secrets.GEOSERVER_HOST }}
+          GEOSERVER_PASSWORD: ${{ secrets.GEOSERVER_PASSWORD }}
+          GEOSERVER_URL: ${{ secrets.GEOSERVER_URL }}
+          GEOSERVER_USER: ${{ secrets.GEOSERVER_USER }}
+          GEOSERVER_WORKSPACE: ${{ secrets.GEOSERVER_WORKSPACE }}
 
       # cache the docker layers. this has a known issue so continue on error is ok
       - uses: satackey/action-docker-layer-caching@v0.0.8
