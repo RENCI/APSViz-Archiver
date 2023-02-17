@@ -46,7 +46,7 @@ jobs:
     name: Execute pytest
     runs-on: ubuntu-latest
 
-    # get the secrets for geoserver
+    # get the geoserver secrets into env params
     env:
         GEOSERVER_HOST: ${{ secrets.GEOSERVER_HOST }}
         GEOSERVER_PASSWORD: ${{ secrets.GEOSERVER_PASSWORD }}
@@ -71,9 +71,9 @@ jobs:
       # run pylint
       - name: Run tests and get output
         run: |
-          echo 'GEOSERVER_WORKSPACE: $GEOSERVER_WORKSPACE'
           echo 'TEST_OUTPUT<<EOF' >> $GITHUB_ENV
-          echo "$(docker run archiver-testing pytest --cov)" >> $GITHUB_ENV
+          echo "$(docker run -e GEOSERVER_HOST=$GEOSERVER_HOST -e GEOSERVER_WORKSPACE=$GEOSERVER_WORKSPACE -e GEOSERVER_USER=$GEOSERVER_USER \
+          -e GEOSERVER_PASSWORD=$GEOSERVER_PASSWORD -e GEOSERVER_URL=$GEOSERVER_URL archiver-testing pytest --cov)" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       # check for any issues
