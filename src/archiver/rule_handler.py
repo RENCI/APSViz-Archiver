@@ -186,9 +186,9 @@ class RuleHandler:
             # operate on a data file
             elif rule.data_type == DataType.FILE:
                 ret_val = self.rule_utils.copy_file(rule)
-
-            # set the return value
-            ret_val = True
+            # unknown operation
+            else:
+                ret_val = False
 
         # report the exception
         except shutil.SameFileError:
