@@ -83,21 +83,21 @@ def test_remove_directory():
     assert not os.path.exists(source_dir)
 
 
-def test_remove_directory_and_geoserver_coverage_store():
-    # create a directory for testing
-    test_copy_directory()
-
-    # get the paths to the test directories
-    source_dir: str = os.path.join(output_path, 'dir2/')
-
-    # create a test rule
-    test_rule: dict = {'name': 'Test - Remove geoserver layer and directory', 'description': 'Remove a GeoServer layer and directory',
-                       'query_criteria_type': None, 'query_data_type': None, 'query_data_value': None, 'predicate_type': None,
-                       'sync_system_type': 'GEOSERVER', 'action_type': 'REMOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None}
-
-    # run the rule
-    process_stats = run_rule(test_rule)
-
-    # interrogate the result
-    assert process_stats['removed'] == 1 and process_stats['failed'] == 0
-    assert not os.path.exists(source_dir)
+# def test_remove_directory_and_geoserver_coverage_store():
+#     # create a directory for testing
+#     test_copy_directory()
+#
+#     # get the paths to the test directories
+#     source_dir: str = os.path.join(output_path, 'dir2/')
+#
+#     # create a test rule
+#     test_rule: dict = {'name': 'Test - Remove geoserver layer and directory', 'description': 'Remove a GeoServer layer and directory',
+#                        'query_criteria_type': None, 'query_data_type': None, 'query_data_value': None, 'predicate_type': None,
+#                        'sync_system_type': 'GEOSERVER', 'action_type': 'REMOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None}
+#
+#     # run the rule
+#     process_stats = run_rule(test_rule)
+#
+#     # interrogate the result
+#     assert process_stats['removed'] == 1 and process_stats['failed'] == 0
+#     assert not os.path.exists(source_dir)

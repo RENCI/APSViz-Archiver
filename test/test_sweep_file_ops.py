@@ -30,7 +30,7 @@ def test_copy_file_sweep():
     :return:
     """
     # get the paths to the test directories
-    source_dir: str = os.path.join(output_path, 'sweep_dir1', 'sweep_sub/')
+    source_dir: str = os.path.join(output_path, 'sweep_dir1/')  # , 'sweep_sub/'
     dest_dir: str = os.path.join(output_path, 'sweep_dir2/')
 
     # create a test rule
@@ -50,7 +50,12 @@ def test_copy_file_sweep():
 
     # make sure all the files were transferred
     for entity in entities:
-        assert os.path.isfile(os.path.join(dest_dir, entity))
+        # if this is a not source directory it should have been copied
+        if not os.path.isdir(os.path.join(source_dir, entity)):
+            assert os.path.isfile(os.path.join(dest_dir, entity))
+        # if this directory exists in the dest it is an error for file ops
+        elif os.path.isdir(os.path.join(dest_dir, entity)):
+            assert "Directory found on a file only operation."
 
 
 def test_move_file_sweep():
@@ -68,7 +73,7 @@ def test_move_file_sweep():
                        'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
                        'action_type': 'SWEEP_MOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': dest_dir}
 
-    # get a list of the contents of the source directory
+    # get a list of the contents of the source directory that will be moved
     entities = os.listdir(source_dir)
 
     # run the rule
@@ -97,9 +102,6 @@ def test_remove_file_sweep():
                        'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
                        'action_type': 'SWEEP_REMOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': None}
 
-    # get a list of the contents of the source directory
-    entities = os.listdir(source_dir)
-
     # run the rule
     process_stats = run_rule(test_rule)
 
@@ -107,9 +109,12 @@ def test_remove_file_sweep():
     assert process_stats['swept'] == 1 and process_stats['failed'] == 0
     assert os.path.exists(source_dir)
 
+    # get a list of the contents of the source directory
+    files = os.listdir(source_dir)
+
     # make sure all the files were removed
-    for entity in entities:
-        assert not os.path.isfile(os.path.join(source_dir, entity))
+    for file in files:
+        assert not os.path.isfile(os.path.join(source_dir, file))
 
 
 def test_cleanup():

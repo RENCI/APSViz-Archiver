@@ -14,6 +14,7 @@ from time import sleep
 
 from src.archiver.rule_handler import RuleHandler
 from src.common.rule_utils import RuleUtils
+from src.common.rule_enums import DataType
 
 # define the directory for the tests and data
 input_path = os.path.dirname(__file__)
@@ -50,11 +51,11 @@ def sweeps_init():
     # create the run handler
     rule_handler = RuleHandler()
 
+    # create a rule utility
+    rule_utils = RuleUtils()
+
     # for each test
     for test_rule in test_rules:
-        # create a rule utility
-        rule_utils = RuleUtils()
-
         # validate and convert the dict into a rule
         rule: RuleUtils.Rule = rule_utils.validate_and_convert_to_rule(test_rule)
 
@@ -67,15 +68,17 @@ def sweeps_init():
         # interrogate the result
         assert process_stats['copied'] == 1 and process_stats['failed'] == 0
 
-        assert os.path.isfile(os.path.join(dest_dir, 'test_file.txt'))
-        assert os.path.exists(os.path.join(dest_dir, 'sweep_sub'))
+        assert os.path.isfile(os.path.join(dest_dir, source_file))
+        assert os.path.exists(os.path.join(dest_dir, rule.destination))
 
-        # get a list of the contents of the source directory
-        entities = os.listdir(source)
+        # if this is a directory operation make sure they all made it
+        if rule.data_type == DataType.DIRECTORY:
+            # get a list of the contents of the source directory
+            files = os.listdir(source)
 
-        # make sure all the files were transferred
-        for entity in entities:
-            assert os.path.isfile(os.path.join(dest_sub, entity))
+            # make sure all the files were transferred
+            for file in files:
+                assert os.path.isfile(os.path.join(rule.destination, file))
 
     # pause so that the data ages long enough so age tests work
     sleep(3)
