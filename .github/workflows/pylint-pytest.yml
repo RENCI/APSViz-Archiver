@@ -71,6 +71,7 @@ jobs:
       # run pylint
       - name: Run tests and get output
         run: |
+          echo 'GEOSERVER_WORKSPACE: $GEOSERVER_WORKSPACE'
           echo 'TEST_OUTPUT<<EOF' >> $GITHUB_ENV
           echo "$(docker run archiver-testing pytest --cov)" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
