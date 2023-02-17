@@ -32,7 +32,7 @@ COPY ./test/test_files test/test_files/
 
 #ENV LOG_PATH /data/logs
 #ENV TESTDATA_PATH /data/tmp
-ENV PYTHONPATH="/repo/APSVIZ-Archiver/src:/repo/APSVIZ-Archiver/test:$PYTHONPATH"
+ENV PYTHONPATH="/repo/APSVIZ-Archiver:$PYTHONPATH"
 
 # start the tests
 # CMD pytest
