@@ -26,6 +26,14 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
+      # get the secrets for geoserver
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          include: GEOSERVER_*
+      - run:
+          echo "Value of GEOSERVER_WORKSPACE: $GEOSERVER_WORKSPACE"
+
       # cache the docker layers. this has a known issue so continue on error is ok
       - uses: satackey/action-docker-layer-caching@v0.0.8
         continue-on-error: true
