@@ -15,6 +15,7 @@
           "query_data_type": "INTEGER",
           "query_data_value": 3,
           "predicate_type": "GREATER_THAN",
+          "sync_system_type": null,
           "action_type": "SWEEP_COPY",
           "data_type": "DIRECTORY",
           "source": "/mnt/c/Users/powen/PycharmProjects/APSVIZ/APSVIZ-Archiver/test_logs",

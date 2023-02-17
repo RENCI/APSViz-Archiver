@@ -15,7 +15,7 @@
           "query_data_type": null,
           "query_data_value": null,
           "predicate_type": null,
-          "sync_system": null,
+          "sync_system_type": null,
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "",
