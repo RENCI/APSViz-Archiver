@@ -30,6 +30,13 @@ jobs:
       - uses: satackey/action-docker-layer-caching@v0.0.8
         continue-on-error: true
 
+      # get the secrets for geoserver
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+      - run:
+          echo "Value of GEOSERVER_WORKSPACE: $GEOSERVER_WORKSPACE"
+
       # build the image
       - name: Build docker image
         run: docker build -t archiver-testing -f Dockerfile.test .
