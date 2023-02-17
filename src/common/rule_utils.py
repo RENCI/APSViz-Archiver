@@ -59,6 +59,9 @@ class RuleUtils:
         # init the return value
         ret_val: bool = False
 
+        # init the final directory
+        new_source = rule.source
+
         try:
             # create the destination directory if it doesn't exist
             if os.path.dirname(rule.destination) is not None and not os.path.exists(rule.destination) and not os.path.basename(rule.destination):
@@ -67,15 +70,15 @@ class RuleUtils:
 
             # append the optional file name if exists
             if opt_name:
-                rule.source = os.path.join(rule.source, opt_name)
+                new_source = os.path.join(rule.source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
+            self.logger.debug('Source: %s, destination: %s', new_source, rule.destination)
 
             # preform the move
-            shutil.move(rule.source, rule.destination)
+            shutil.move(new_source, rule.destination)
 
-            # is there a external system sync that has to occur
+            # if there is an external system sync that has to occur
             if rule.sync_system_type is not None:
                 ret_val = self.handle_system_sync(rule)
 
@@ -97,7 +100,8 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    def handle_system_sync(self, rule: Rule):
+    @staticmethod
+    def handle_system_sync(rule: Rule):
         """
         Handles a system sync operation.
 
@@ -115,10 +119,10 @@ class RuleUtils:
                 geo_svr: GeoServerUtils = GeoServerUtils()
 
                 # get the layer name. it should be the last part of the source
-                layer_name = ''
+                coverage_store_name = ''
 
                 # remove the layer
-                success: bool = geo_svr.remove_layer(layer_name)
+                success: bool = geo_svr.remove_coverage_store(coverage_store_name)
 
         # return the result
         return success
@@ -134,19 +138,23 @@ class RuleUtils:
         # init the return value
         ret_val: bool = False
 
+        # init the final directories
+        new_source = rule.source
+        new_destination = rule.destination
+
         try:
             # is there more to this source sweep operation
             if opt_name:
                 # append the sweep dir
-                rule.source = os.path.join(rule.source, opt_name)
-                rule.destination = os.path.join(rule.destination, opt_name)
+                new_source = os.path.join(rule.source, opt_name)
+                new_destination = os.path.join(rule.destination, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
+            self.logger.debug('Source: %s, destination: %s', new_source, new_destination)
 
             # if the path exists the source directory is moved to the dest
             # if os.path.exists(destination):
-            shutil.move(rule.source, rule.destination)
+            shutil.move(new_source, new_destination)
             # else the source directory is renamed to the destination directory
             # else:
             #     os.rename(source, destination)
@@ -181,6 +189,9 @@ class RuleUtils:
         # init the return value
         ret_val: bool = False
 
+        # init the final directory
+        new_source = rule.source
+
         try:
             # create the destination directory if it doesn't exist
             if os.path.dirname(rule.destination) is not None and not os.path.exists(rule.destination) and not os.path.basename(rule.destination):
@@ -189,13 +200,13 @@ class RuleUtils:
 
             # append the optional file name if exists
             if opt_name:
-                rule.source = os.path.join(rule.source, opt_name)
+                new_source = os.path.join(rule.source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
+            self.logger.debug('Source: %s, destination: %s', new_source, rule.destination)
 
             # perform the file copy operation
-            shutil.copy(rule.source, rule.destination)
+            shutil.copy(new_source, rule.destination)
 
             # set the return value
             ret_val = True
@@ -219,26 +230,30 @@ class RuleUtils:
         # init the return value
         ret_val: bool = False
 
+        # init the final directories
+        new_source = rule.source
+        new_destination = rule.destination
+
         try:
             # is there more to this source sweep operation
             if opt_name:
                 # append the sweep dir
-                rule.source = os.path.join(rule.source, opt_name)
-                rule.destination = os.path.join(rule.destination, opt_name)
+                new_source = os.path.join(rule.source, opt_name)
+                new_destination = os.path.join(rule.destination, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', rule.source, rule.destination)
+            self.logger.debug('Source: %s, destination: %s', new_source, new_destination)
 
             # copy the directory
-            shutil.copytree(rule.source, rule.destination, dirs_exist_ok=True)
+            shutil.copytree(new_source, new_destination, dirs_exist_ok=True)
 
             # set the return value
             ret_val = True
 
         except FileNotFoundError:
-            self.logger.exception('Error: Directory %s not found.', rule.source)
+            self.logger.exception('Error: Directory %s not found.', new_source)
         except FileExistsError:
-            self.logger.exception('Error: Directory %s already exists.', rule.destination)
+            self.logger.exception('Error: Directory %s already exists.', new_destination)
         except Exception:
             self.logger.exception('Error: General exception detected during a directory copy.')
 
@@ -256,16 +271,19 @@ class RuleUtils:
         # init the return value
         ret_val: bool = False
 
+        # init the final directory
+        new_source = rule.source
+
         try:
             # append the optional file name if exists
             if opt_name:
-                rule.source = os.path.join(rule.source, opt_name)
+                new_source = os.path.join(rule.source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s', rule.source)
+            self.logger.debug('Source: %s', new_source)
 
             # perform the file operation
-            os.remove(rule.source)
+            os.remove(new_source)
 
             # set the return value
             ret_val = True
@@ -287,16 +305,19 @@ class RuleUtils:
         # init the return value
         ret_val: bool = False
 
+        # init the final directory
+        new_source = rule.source
+
         try:
             # append the optional file name if exists
             if opt_name:
-                rule.source = os.path.join(rule.source, opt_name)
+                new_source = os.path.join(rule.source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s', rule.source)
+            self.logger.debug('Source: %s', new_source)
 
             # perform the directory removal operation
-            shutil.rmtree(rule.source)
+            shutil.rmtree(new_source)
 
             # set the return value
             ret_val = True
@@ -414,7 +435,7 @@ class RuleUtils:
 
     def validate_and_convert_to_rule(self, rule: dict) -> namedtuple:
         """
-        Validatges and converts json rule elements to a Rule named tuple.
+        Validates and converts json rule elements to a Rule named tuple.
 
         :return:
         """
