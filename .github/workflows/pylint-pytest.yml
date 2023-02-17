@@ -26,14 +26,6 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      # get the secrets for geoserver
-      - env:
-          GEOSERVER_HOST: ${{ secrets.GEOSERVER_HOST }}
-          GEOSERVER_PASSWORD: ${{ secrets.GEOSERVER_PASSWORD }}
-          GEOSERVER_URL: ${{ secrets.GEOSERVER_URL }}
-          GEOSERVER_USER: ${{ secrets.GEOSERVER_USER }}
-          GEOSERVER_WORKSPACE: ${{ secrets.GEOSERVER_WORKSPACE }}
-
       # cache the docker layers. this has a known issue so continue on error is ok
       - uses: satackey/action-docker-layer-caching@v0.0.8
         continue-on-error: true
@@ -53,6 +45,14 @@ jobs:
   test:
     name: Execute pytest
     runs-on: ubuntu-latest
+
+    # get the secrets for geoserver
+    env:
+        GEOSERVER_HOST: ${{ secrets.GEOSERVER_HOST }}
+        GEOSERVER_PASSWORD: ${{ secrets.GEOSERVER_PASSWORD }}
+        GEOSERVER_URL: ${{ secrets.GEOSERVER_URL }}
+        GEOSERVER_USER: ${{ secrets.GEOSERVER_USER }}
+        GEOSERVER_WORKSPACE: ${{ secrets.GEOSERVER_WORKSPACE }}
 
     # job steps
     steps:
