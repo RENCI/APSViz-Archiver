@@ -27,9 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       # get the secrets for geoserver
-      - run:
-          echo "Value of GEOSERVER_HOST: $GEOSERVER_HOST"
-        env:
+      - env:
           GEOSERVER_HOST: ${{ secrets.GEOSERVER_HOST }}
           GEOSERVER_PASSWORD: ${{ secrets.GEOSERVER_PASSWORD }}
           GEOSERVER_URL: ${{ secrets.GEOSERVER_URL }}
