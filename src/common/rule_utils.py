@@ -461,8 +461,8 @@ class RuleUtils:
             # if things are ok so far
             if success:
                 # convert values that are enum types
-                rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] if rule[
-                                                                                                    'query_criteria_type'] is not None else QueryCriteriaType.NONE
+                rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] \
+                    if rule['query_criteria_type'] is not None else QueryCriteriaType.NONE
                 rule['query_data_type'] = QueryDataType[rule['query_data_type']] if rule['query_data_type'] is not None else QueryDataType.NONE
                 rule['predicate_type'] = PredicateType[rule['predicate_type']] if rule['predicate_type'] is not None else PredicateType.NONE
                 rule['sync_system_type'] = SyncSystemType[rule['sync_system_type']] if rule['sync_system_type'] is not None else SyncSystemType.NONE

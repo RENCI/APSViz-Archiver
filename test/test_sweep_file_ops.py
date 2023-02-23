@@ -50,12 +50,18 @@ def test_copy_file_sweep():
 
     # make sure all the files were transferred
     for entity in entities:
+        # flag to capture a directory found in a file operation
+        dir_found = False
+
         # if this is a not source directory it should have been copied
         if not os.path.isdir(os.path.join(source_dir, entity)):
             assert os.path.isfile(os.path.join(dest_dir, entity))
         # if this directory exists in the dest it is an error for file ops
         elif os.path.isdir(os.path.join(dest_dir, entity)):
-            assert "Directory found on a file only operation."
+            dir_found = True
+
+        # check the result
+        assert not dir_found
 
 
 def test_move_file_sweep():
