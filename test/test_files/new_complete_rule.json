@@ -1,0 +1,26 @@
+{
+  "rule_definition_name": "APSViz data archival rule set.",
+  "rule_definition_version": "test",
+  "description": "Tests a complete rule.",
+  "rule_sets": [
+    {
+      "rule_set_name": "Test complete rule",
+      "description": "tests a complete rule by making a copy request",
+      "rules": [
+        {
+          "name": "Test - Initial copy of Test file",
+          "description": "Test initialization.",
+          "query_criteria_type": null,
+          "query_data_type": null,
+          "query_data_value": null,
+          "predicate_type": null,
+          "sync_system_type": null,
+          "action_type": "COPY",
+          "data_type": "FILE",
+          "source": "C:\\Users\\powen\\PycharmProjects\\APSVIZ\\APSVIZ-Archiver\\test\\test_files\\test_file.txt",
+          "destination": "d:/dvols/apsviz/archiver\\dir1/"
+        }
+      ]
+    }
+  ]
+}
