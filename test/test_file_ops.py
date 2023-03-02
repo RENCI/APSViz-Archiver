@@ -11,20 +11,15 @@
     Author: Phil Owen, 10/23/2022
 """
 import os.path
-
 from test_utils import input_path, output_path, cleanup, run_rule
 
 
 def test_copy_file():
     """
-    test the  operation
+    test the simple copy of a file to another directory
 
     :return:
     """
-    ###########
-    # test the simple copy of a file to another directory
-    ###########
-
     # get the paths to the test directories/files
     source: str = os.path.join(input_path, 'test_files/test_file.txt')
     dest: str = os.path.join(output_path, 'file_dir1/')
@@ -64,7 +59,7 @@ def test_copy_file():
 
 def test_move_file():
     """
-    test the  operation
+    test the move operation
 
     :return:
     """
@@ -87,7 +82,7 @@ def test_move_file():
 
 def test_remove_file():
     """
-    test the  operation
+    test the remove operation
 
     :return:
     """
