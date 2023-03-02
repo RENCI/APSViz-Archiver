@@ -6,12 +6,13 @@
 # SPDX-License-Identifier: MIT
 
 """
-    Test file operations
+    Test DB operations
 
-    Author: Phil Owen, 10/23/2022
+    Author: Phil Owen, 3/2/2023
 """
 import pytest
 from src.common.pg_utils_multi import PGUtilsMultiConnect
+
 
 @pytest.mark.skip(reason="Local test only")
 def test_db_connection_creation():

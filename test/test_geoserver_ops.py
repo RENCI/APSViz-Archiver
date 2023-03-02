@@ -10,11 +10,12 @@
 
     Author: Phil Owen, 2/16/2023
 """
-
+import pytest
 from src.common.geoserver_utils import GeoServerUtils
 
 # init the coverage store name used for all these tests
 coverage_store_name: str = 'test_coverage_store'
+
 
 @pytest.mark.skip(reason="Local test only")
 def test_create_coverage_store():
@@ -31,6 +32,7 @@ def test_create_coverage_store():
 
     # check the result
     assert success
+
 
 @pytest.mark.skip(reason="Local test only")
 def test_get_coverage_store():
@@ -53,6 +55,7 @@ def test_get_coverage_store():
 
     # check the result
     assert not success and store.text.startswith('No such coverage store: ')
+
 
 @pytest.mark.skip(reason="Local test only")
 def test_get_coverage_stores():
@@ -85,6 +88,7 @@ def test_get_coverage_stores():
 
     # check the results
     assert success and found
+
 
 @pytest.mark.skip(reason="Local test only")
 def test_remove_coverage_store():
