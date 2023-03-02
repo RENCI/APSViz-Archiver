@@ -20,6 +20,7 @@ class LoggingUtil:
     """
         Creates and configures a logger
     """
+
     @staticmethod
     def init_logging(name, level=logging.INFO, line_format='short', log_file_path=None):
         """
@@ -33,12 +34,8 @@ class LoggingUtil:
             return logger
 
         # define the various output formats
-        format_type = {
-            "minimum": '%(message)s',
-            "short": '%(funcName)s(): %(message)s',
-            "medium": '%(asctime)-15s - %(funcName)s(): %(message)s',
-            "long": '%(asctime)-15s  - %(filename)s %(funcName)s() %(levelname)s: %(message)s'
-        }[line_format]
+        format_type = {"minimum": '%(message)s', "short": '%(funcName)s(): %(message)s', "medium": '%(asctime)-15s - %(funcName)s(): %(message)s',
+                       "long": '%(asctime)-15s  - %(filename)s %(funcName)s() %(levelname)s: %(message)s'}[line_format]
 
         # create a stream handler (default to console)
         stream_handler = logging.StreamHandler()
