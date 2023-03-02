@@ -23,15 +23,15 @@ def test_db_connection_creation():
     db_names: tuple = ('asgs', 'apsviz')
 
     # create a DB connection object
-    db = PGUtilsMultiConnect(db_names)
+    db_info = PGUtilsMultiConnect(db_names)
 
     # check the object returned
-    assert len(db.dbs) == len(db_names)
+    assert len(db_info.dbs) == len(db_names)
 
     # for each db specified
     for db_name in db_names:
         # make a db request
-        ret_val = db.exec_sql(db_name, 'SELECT version()')
+        ret_val = db_info.exec_sql(db_name, 'SELECT version()')
 
         # check the data returned
         assert ret_val.startswith('PostgreSQL')
