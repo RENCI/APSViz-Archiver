@@ -13,9 +13,10 @@
 
 import os
 import time
-import psycopg2
-from src.common.logger import LoggingUtil
 from collections import namedtuple
+import psycopg2
+
+from src.common.logger import LoggingUtil
 
 
 class PGUtilsMultiConnect:
@@ -46,25 +47,28 @@ class PGUtilsMultiConnect:
         self.dbs: dict = {}
 
         # create the named tuple definition for DB info
-        self.DB_Info: namedtuple = namedtuple('DB_Info', ['name', 'conn_str', 'conn', 'cursor'])
+        self.db_info_tpl: namedtuple = namedtuple('DB_Info', ['name', 'conn_str', 'conn', 'cursor'])
+
+        # save the DB names for connection/cursor closing on class tear-down
+        self.db_names: list = db_names
 
         # get the details loaded into a tuple for all the DBs
-        for db_name in db_names:
+        for db_name in self.db_names:
             # get the connection string
             conn_config = self.get_conn_config(db_name)
 
             # create a temporary tuple to get the discovery process started
-            temp_tuple = self.DB_Info(db_name, conn_config, None, None)
+            temp_tuple: namedtuple = self.db_info_tpl(db_name, conn_config, None, None)
 
-            # store the verified db connection info
-            db_info = self.get_db_connection(temp_tuple)
+            # save the verified db connection info
+            db_info: namedtuple = self.get_db_connection(temp_tuple)
 
-            # add the tuple to the dict
+            # add the verified connection to the dict
             self.dbs.update({db_name: db_info})
 
     def __del__(self):
         """
-        close up the DB
+        close up the DB connections and cursors
 
         :return:
         """
@@ -98,14 +102,12 @@ class PGUtilsMultiConnect:
         :return:
         """
         # insure the env parameter prefix is uppercase
-        db_name = db_name.upper()
+        db_name: str = db_name.upper()
 
         # get configuration params from the env params
         user: str = os.environ.get(f'{db_name}_DB_USERNAME')
         password: str = os.environ.get(f'{db_name}_DB_PASSWORD')
         dbname: str = os.environ.get(f'{db_name}_DB_DATABASE')
-
-        # host and port are the same DB
         host: str = os.environ.get(f'{db_name}_DB_HOST')
         port: int = int(os.environ.get(f'{db_name}_DB_PORT'))
 
@@ -123,7 +125,7 @@ class PGUtilsMultiConnect:
         :return:
         """
         # init the connection status indicator
-        good_conn = False
+        good_conn: bool = False
 
         # until forever
         while not good_conn:
@@ -140,7 +142,7 @@ class PGUtilsMultiConnect:
                     conn.autocommit = True
 
                     # create a new db info tuple
-                    verified_tuple = self.DB_Info(db_info.name, db_info.conn_str, conn, conn.cursor())
+                    verified_tuple: namedtuple = self.db_info_tpl(db_info.name, db_info.conn_str, conn, conn.cursor())
 
                     # check the DB connection
                     good_conn = self.check_db_connection(verified_tuple)
@@ -149,7 +151,7 @@ class PGUtilsMultiConnect:
                     if good_conn:
                         self.logger.info('DB Connection established to %s.', db_info.name)
 
-                        # return the fully (re)populated db info tuple
+                        # return the verified db info tuple
                         return verified_tuple
                 else:
                     # the db info sent is ok to use
