@@ -42,7 +42,6 @@ class GeoServerUtils:
         self.username = os.getenv('GEOSERVER_USER')
         self.password = os.environ.get('GEOSERVER_PASSWORD')
         self.geoserver_url = os.environ.get('GEOSERVER_URL')
-        self.geoserver_host = os.environ.get('GEOSERVER_HOST')
         self.geoserver_workspace = os.environ.get('GEOSERVER_WORKSPACE')
 
         # init the Slack channels
@@ -64,9 +63,11 @@ class GeoServerUtils:
         ret_val = None
 
         try:
+            # build the URL to the service
+            url = f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/coveragestores/{coverage_store_name}'
+
             # execute the get
-            ret_val = requests.get(f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/coveragestores/{coverage_store_name}',
-                                   auth=(self.username, self.password), timeout=10)
+            ret_val = requests.get(url, auth=(self.username, self.password), timeout=10)
 
             # was the call unsuccessful
             if ret_val.status_code != 200:
@@ -97,6 +98,7 @@ class GeoServerUtils:
         ret_val = None
 
         try:
+            # build the URL to the service
             url = f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/coveragestores'
 
             # execute the get
@@ -130,6 +132,7 @@ class GeoServerUtils:
         success: bool = True
 
         try:
+            # build the URL to the service
             url = f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/coveragestores/{coverage_store_name}?recurse=true'
 
             # execute the delete
@@ -164,7 +167,7 @@ class GeoServerUtils:
         success: bool = True
 
         try:
-            # build the API call url
+            # build the URL to the service
             url = f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/coveragestores'
 
             # create the config body
