@@ -116,7 +116,7 @@ class GeoServerUtils:
                 ret_val = ret_val.json()
 
         except Exception:
-            self.logger.exception('Exception getting the geoserver coverage stores')
+            self.logger.exception('Exception gathering all geoserver coverage stores')
             success = False
 
         # return the json to the caller
@@ -181,14 +181,14 @@ class GeoServerUtils:
             # was the call unsuccessful. 201 is returned on success for ths one
             if ret_val.status_code != 201:
                 # log the error
-                self.logger.error('Error %s when removing coverage store "%s".', ret_val.status_code, coverage_store_name)
+                self.logger.error('Error %s when creating coverage store "%s".', ret_val.status_code, coverage_store_name)
 
                 # set the failure flag
                 success = False
 
         except Exception:
             # log the error
-            self.logger.exception('Exception when removing coverage store "%s"', coverage_store_name)
+            self.logger.exception('Exception when creating coverage store "%s"', coverage_store_name)
 
             # set the failure code
             success = False
