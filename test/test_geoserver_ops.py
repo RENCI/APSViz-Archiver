@@ -17,7 +17,7 @@ from src.common.geoserver_utils import GeoServerUtils
 coverage_store_name: str = 'test_coverage_store'
 
 
-@pytest.mark.skip(reason="Local test only")
+#@pytest.mark.skip(reason="Local test only")
 def test_create_coverage_store():
     """
     Tests the creation of a geoserver coverage store
@@ -34,7 +34,7 @@ def test_create_coverage_store():
     assert success
 
 
-@pytest.mark.skip(reason="Local test only")
+#@pytest.mark.skip(reason="Local test only")
 def test_get_coverage_store():
     """
     Tests the retrieval of a geoserver coverage store
@@ -57,7 +57,7 @@ def test_get_coverage_store():
     assert not success and store.text.startswith('No such coverage store: ')
 
 
-@pytest.mark.skip(reason="Local test only")
+#@pytest.mark.skip(reason="Local test only")
 def test_get_coverage_stores():
     """
     Tests getting all the geoserver coverage stores
@@ -90,7 +90,7 @@ def test_get_coverage_stores():
     assert success and found
 
 
-@pytest.mark.skip(reason="Local test only")
+#@pytest.mark.skip(reason="Local test only")
 def test_remove_coverage_store():
     """
     Tests the deletion of a geoserver coverage store
