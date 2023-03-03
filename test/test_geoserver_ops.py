@@ -45,7 +45,7 @@ def test_get_coverage_store():
     geo_svr: GeoServerUtils = GeoServerUtils()
 
     # get the coverage store
-    success, store = geo_svr.get_coverage_store('test_coverage_store')
+    success, store = geo_svr.get_coverage_store(coverage_store_name)
 
     # check the result
     assert success and len(store) == 1
