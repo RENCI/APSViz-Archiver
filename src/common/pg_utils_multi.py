@@ -31,7 +31,7 @@ class PGUtilsMultiConnect:
         Please see the get_conn_config() method below for more details.
     """
 
-    def __init__(self, db_names: tuple = 'asgs'):
+    def __init__(self, db_names: tuple):
         """
         Entry point for the db connection creation and operations
 
@@ -198,7 +198,7 @@ class PGUtilsMultiConnect:
         # return to the caller
         return ret_val
 
-    def exec_sql(self, db_name, sql_stmt: str):
+    def exec_sql(self, db_name: str, sql_stmt: str):
         """
         executes a sql statement
 
@@ -237,4 +237,31 @@ class PGUtilsMultiConnect:
             ret_val = -1
 
         # return to the caller
+        return ret_val
+
+    def remove_adcirc_obs_stations(self, instance_id) -> bool:
+        """
+        removes the adcirc_obs stations that are associated to the instance id.
+
+        """
+        ret_val: bool = True
+
+        try:
+            # build up the sql
+            sql = f"SELECT remove_adcirc_obs_stations('{instance_id}')"
+
+            # execute the sql
+            ret_val = self.exec_sql('adcirc_obs', sql)
+
+            # check the result
+            if ret_val < 1:
+                ret_val = False
+
+        except Exception:
+            self.logger.exception("Error detected executing SQL: %s.", sql)
+
+            # set the error code
+            ret_val = False
+
+        # return the success flag
         return ret_val
