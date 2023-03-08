@@ -10,11 +10,11 @@
 
     Author: Phil Owen, 3/2/2023
 """
-# import pytest
+import pytest
 from src.common.pg_utils_multi import PGUtilsMultiConnect
 
 
-# @pytest.mark.skip(reason="Local test only")
+@pytest.mark.skip(reason="Local test only")
 def test_db_connection_creation():
     """
     Tests the creation and usage of the db utils multi-connect class
@@ -39,6 +39,7 @@ def test_db_connection_creation():
         assert ret_val.startswith('PostgreSQL')
 
 
+@pytest.mark.skip(reason="Local test only")
 def test_remove_adcirc_obs_stations():
     """
     test the SP that removes the obs/mod station data using the instance ID
