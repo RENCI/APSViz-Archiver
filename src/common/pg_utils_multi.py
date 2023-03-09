@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-    Class for database functionalities
+    Base class for database functionalities
 
     Author: Phil Owen, RENCI.org
 """
@@ -21,7 +21,7 @@ from src.common.logger import LoggingUtil
 
 class PGUtilsMultiConnect:
     """
-        Methods for database functionalities.
+        Base class for database functionalities.
 
         This class supports setting up connections to multiple databases. To do that
         the class relies on environment parameter names that adhere to a specific
@@ -31,7 +31,7 @@ class PGUtilsMultiConnect:
         Please see the get_conn_config() method below for more details.
     """
 
-    def __init__(self, db_names: tuple):
+    def __init__(self, app_name, db_names: tuple):
         """
         Entry point for the db connection creation and operations
 
@@ -41,7 +41,7 @@ class PGUtilsMultiConnect:
         log_level, log_path = LoggingUtil.prep_for_logging()
 
         # create a logger
-        self.logger = LoggingUtil.init_logging("Archiver.pg_utils", level=log_level, line_format='medium', log_file_path=log_path)
+        self.logger = LoggingUtil.init_logging(f"{app_name}.PGUtilsMultiConnect", level=log_level, line_format='medium', log_file_path=log_path)
 
         # create a dict for the DB connection details
         self.dbs: dict = {}
@@ -50,7 +50,7 @@ class PGUtilsMultiConnect:
         self.db_info_tpl: namedtuple = namedtuple('DB_Info', ['name', 'conn_str', 'conn', 'cursor'])
 
         # save the DB names for connection/cursor closing on class tear-down
-        self.db_names: list = db_names
+        self.db_names: tuple = db_names
 
         # get the details loaded into a tuple for all the DBs
         for db_name in self.db_names:
@@ -68,7 +68,7 @@ class PGUtilsMultiConnect:
 
     def __del__(self):
         """
-        close up the DB connections and cursors
+        Close up the DB connections and cursors
 
         :return:
         """
@@ -120,7 +120,7 @@ class PGUtilsMultiConnect:
     def get_db_connection(self, db_info: namedtuple) -> object:
         """
         Gets a connection to the DB. performs a check to continue trying until
-        a connection is made
+        a connection is made.
 
         :return:
         """
@@ -165,7 +165,7 @@ class PGUtilsMultiConnect:
 
     def check_db_connection(self, db_info: namedtuple) -> bool:
         """
-        checks to see if there is a good connection to the DB
+        Checks to see if there is a good connection to the DB.
 
         :param db_info:
         :return: boolean
@@ -200,7 +200,7 @@ class PGUtilsMultiConnect:
 
     def exec_sql(self, db_name: str, sql_stmt: str):
         """
-        executes a sql statement
+        Executes a sql statement.
 
         :param db_name:
         :param sql_stmt:
@@ -237,31 +237,4 @@ class PGUtilsMultiConnect:
             ret_val = -1
 
         # return to the caller
-        return ret_val
-
-    def remove_adcirc_obs_stations(self, instance_id) -> bool:
-        """
-        removes the adcirc_obs stations that are associated to the instance id.
-
-        """
-        ret_val: bool = True
-
-        try:
-            # build up the sql
-            sql = f"SELECT remove_adcirc_obs_stations('{instance_id}')"
-
-            # execute the sql
-            ret_val = self.exec_sql('adcirc_obs', sql)
-
-            # check the result
-            if ret_val < 1:
-                ret_val = False
-
-        except Exception:
-            self.logger.exception("Error detected executing SQL: %s.", sql)
-
-            # set the error code
-            ret_val = False
-
-        # return the success flag
         return ret_val
