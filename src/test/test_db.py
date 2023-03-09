@@ -11,7 +11,7 @@
     Author: Phil Owen, 3/2/2023
 """
 import pytest
-from src.common.pg_utils_multi import PGUtilsMultiConnect
+from src.common.pg_impl import PGImplementation
 
 
 @pytest.mark.skip(reason="Local test only")
@@ -25,7 +25,7 @@ def test_db_connection_creation():
     db_names: tuple = ('asgs', 'apsviz', 'adcirc_obs')
 
     # create a DB connection object
-    db_info = PGUtilsMultiConnect(db_names)
+    db_info = PGImplementation(db_names)
 
     # check the object returned
     assert len(db_info.dbs) == len(db_names)
@@ -51,7 +51,7 @@ def test_remove_adcirc_obs_stations():
     db_name: tuple = ('adcirc_obs',)
 
     # create a DB connection object
-    db_info = PGUtilsMultiConnect(db_name)
+    db_info = PGImplementation(db_name)
 
     # check the object returned
     assert len(db_info.dbs) == len(db_name)
