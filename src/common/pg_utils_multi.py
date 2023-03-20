@@ -16,7 +16,6 @@ import time
 from collections import namedtuple
 
 import psycopg2
-from psycopg2.extensions import STATUS_READY
 
 from src.common.logger import LoggingUtil
 
@@ -70,11 +69,9 @@ class PGUtilsMultiConnect:
             # create a temporary tuple to get the discovery process started
             temp_tuple: namedtuple = self.db_info_tpl(db_name, conn_config, None)
 
-            # save the verified db connection info
-            db_info: namedtuple = self.get_db_connection(temp_tuple)
+            # get the connection
+            self.get_db_connection(temp_tuple)
 
-            # add the verified connection to the dict
-            self.dbs.update({db_name: db_info})
 
     def __del__(self):
         """
@@ -102,9 +99,6 @@ class PGUtilsMultiConnect:
 
                 # close it
                 conn.close()
-
-                # clear the connection object
-                self.dbs[db_name].conn = None
         except Exception:
             self.logger.error('Error detected closing the %s DB connection.', db_name)
 
@@ -132,7 +126,7 @@ class PGUtilsMultiConnect:
         # return to the caller
         return connection_str
 
-    def get_db_connection(self, db_info: namedtuple) -> object:
+    def get_db_connection(self, db_info: namedtuple) -> bool:
         """
         Gets a connection to the DB. performs a check to continue trying until
         a connection is made.
@@ -148,7 +142,7 @@ class PGUtilsMultiConnect:
                 # check the DB connection
                 good_conn = self.check_db_connection(db_info)
 
-                # do we have a good connection
+                # try to get a connection if the check failed
                 if not good_conn:
                     # try to connect to the DB
                     conn = psycopg2.connect(db_info.conn_str)
@@ -159,24 +153,30 @@ class PGUtilsMultiConnect:
                     # create a new db info tuple
                     verified_tuple: namedtuple = self.db_info_tpl(db_info.name, db_info.conn_str, conn)
 
-                    # check the DB connection
+                    # check the new DB connection
                     good_conn = self.check_db_connection(verified_tuple)
 
                     # is the connection ok now?
                     if good_conn:
                         self.logger.info('DB Connection established (auto commit %s) to %s.', self.auto_commit, db_info.name)
 
-                        # return the verified db info tuple
-                        return verified_tuple
-                else:
-                    # the db info sent is ok to use
-                    return db_info
+                        # add the verified connection to the dict
+                        self.dbs.update({db_info.name: verified_tuple})
+
+                        # no need to continue
+                        break
+
             except Exception:
-                self.logger.exception('Error getting connection %s.', db_info.name)
+                self.logger.error('Error getting connection %s.', db_info.name)
                 good_conn = False
 
-            self.logger.error('DB Connection failed to %s. Retrying...', db_info.name)
-            time.sleep(5)
+            # are we still looking for a connection
+            if good_conn is False:
+                self.logger.error('DB Connection failed to %s. Retrying...', db_info.name)
+                time.sleep(5)
+
+        # return pass/fail flag
+        return good_conn
 
     def check_db_connection(self, db_info: namedtuple) -> bool:
         """
@@ -188,29 +188,39 @@ class PGUtilsMultiConnect:
         # init the return value
         ret_val = None
 
-        try:
-            # is there a connection
-            if db_info.conn and db_info.conn.status == STATUS_READY:
-                # everything is a go
-                ret_val = True
+        # init the cursor storage
+        cursor = None
 
-            else:
-                # need a new connection
+        try:
+            # is there an existing connection
+            if not db_info.conn:
                 ret_val = False
+            else:
+                # get the cursor
+                cursor = db_info.conn.cursor()
+
+                # get the DB version
+                cursor.execute("SELECT version()")
+
+                # get the value
+                db_version = cursor.fetchone()
+
+                # set the success (or not) flag
+                ret_val = bool(db_version)
 
         except Exception:
-            self.logger.exception('Error general database error checking DB connection')
+            self.logger.error('Error general DB connection issue')
 
             # connection failed
             ret_val = False
         except psycopg2.DatabaseError:
-            self.logger.exception('Error database error checking DB connection')
+            self.logger.error('Error database error checking DB connection')
 
             # connection failed
             ret_val = False
 
         except psycopg2.InterfaceError:
-            self.logger.exception('Error database interface error checking DB connection')
+            self.logger.error('Error database interface error checking DB connection')
 
             # connection failed
             ret_val = False
@@ -233,39 +243,48 @@ class PGUtilsMultiConnect:
         db_info = self.dbs[db_name]
 
         # insure we have a valid DB connection
-        self.get_db_connection(db_info)
+        success = self.get_db_connection(db_info)
 
-        # init the cursor
-        cursor = None
+        # did we get a connection
+        if success:
+            # init the cursor
+            cursor = None
 
-        try:
-            # get a cursor
-            cursor = db_info.conn.cursor()
+            try:
+                # make sure the latest db_info is used
+                db_info = self.dbs[db_name]
 
-            # execute the sql
-            cursor.execute(sql_stmt)
+                # get a cursor
+                cursor = db_info.conn.cursor()
 
-            # get the returned value
-            ret_val = cursor.fetchone()
+                # execute the sql
+                cursor.execute(sql_stmt)
 
-            # trap the return
-            if ret_val is None or ret_val[0] is None:
-                # specify a return code on an empty result
+                # get the returned value
+                ret_val = cursor.fetchone()
+
+                # trap the return
+                if ret_val is None or ret_val[0] is None:
+                    # specify a return code on an empty result
+                    ret_val = -1
+                else:
+                    # get the one and only record of json
+                    ret_val = ret_val[0]
+
+            except Exception:
+                self.logger.exception("Error detected executing SQL: %s.", sql_stmt)
+
+                # set the error code
                 ret_val = -1
-            else:
-                # get the one and only record of json
-                ret_val = ret_val[0]
+            finally:
+                # in there is a cursor, close it
+                if cursor is not None:
+                    # close it
+                    cursor.close()
 
-        except Exception:
-            self.logger.exception("Error detected executing SQL: %s.", sql_stmt)
-
+        else:
             # set the error code
             ret_val = -1
-        finally:
-            # in there is a cursor, close it
-            if cursor is not None:
-                # close it
-                cursor.close()
 
         # return to the caller
         return ret_val
@@ -277,7 +296,7 @@ class PGUtilsMultiConnect:
         :param db_name:
         :return:
         """
-        # if this is connection set to not auto commit
+        # if this connection is set to not auto commit
         if not self.dbs[db_name].conn.autocommit:
             # issue the commit
             self.dbs[db_name].conn.commit()
