@@ -38,7 +38,7 @@ if __name__ == '__main__':
     # input argument can be a singleton or a comma seperated list
 
     # create a command line parser
-    parser = argparse.ArgumentParser(description = 'help', formatter_class = argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description='help', formatter_class=argparse.RawDescriptionHelpFormatter)
 
     # assign the expected input arg
     parser.add_argument('-f', '--filename', help='Input can be a singleton or a comma seperated list of file names ')
