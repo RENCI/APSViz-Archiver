@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: LicenseRef-RENCI
 # SPDX-License-Identifier: MIT
 
-# This Dockerfile is used to build the APSVIZ-Supervisor image
+# This Dockerfile is used to build the APSVIZ-Archiver image
 
 # leverage the renci python base image
 FROM python:3.11.3-slim
