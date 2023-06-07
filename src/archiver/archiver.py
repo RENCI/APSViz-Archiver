@@ -14,7 +14,7 @@
 import datetime
 import logging
 
-from rule_handler import RuleHandler
+from src.archiver.rule_handler import RuleHandler
 from src.common.logger import LoggingUtil
 from src.common.rule_utils import RuleUtils
 from src.common.general_utils import GeneralUtils
