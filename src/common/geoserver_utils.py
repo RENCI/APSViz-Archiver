@@ -129,7 +129,6 @@ class GeoServerUtils:
                     # step 3. remove the catalog member records from the apsviz DB.
                     # step 4. copy, move or remove the geoserver files from the data directory.
                     # step 5. copy, move or remove the obs/mod files from the file server.
-
                     if operation(rule, instance_id):
                         # handle the run stats
                         stats[rule_action_type_name] += 1
@@ -349,6 +348,8 @@ class GeoServerUtils:
                 if not self.db_info.is_tropical_run(instance_id) or rule.debug:
                     # add this entity to the list of instances to process
                     ret_val.add(instance_id)
+                else:
+                    self.logger.debug('Warning: %s was detected to be a tropical run. No processing will occur on this item.', instance_id)
 
         # return to the caller
         return ret_val
@@ -364,11 +365,11 @@ class GeoServerUtils:
         # init the success flag
         success: bool = True
 
+        # save the obs/mod path to the run
+        obs_mod_dir = os.path.join(self.fileserver_obs_path, instance_id)
+
         # execute the call if not in debug mode
         if not rule.debug:
-            # save the obs/mod path to the run
-            obs_mod_dir = os.path.join(self.fileserver_obs_path, instance_id)
-
             # make sure the entity still exists
             if not os.path.exists(obs_mod_dir):
                 success = False
@@ -416,7 +417,8 @@ class GeoServerUtils:
                 if not success:
                     self.logger.error('General error performing the directory operation for: %s.', instance_id)
         else:
-            self.logger.debug('Debug mode on. Would have executed: perform_dir_ops( %s )', instance_id)
+            self.logger.debug('Debug mode on. Would have executed: perform_dir_ops( %s ) with %s on %s', instance_id,
+                              rule.action_type, obs_mod_dir)
 
         # return to the caller
         return success
