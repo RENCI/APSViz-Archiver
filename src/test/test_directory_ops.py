@@ -27,8 +27,8 @@ def test_copy_directory():
 
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Copy directory', 'description': 'Directory copy.', 'query_criteria_type': None, 'query_data_type': None,
-                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY', 'data_type': 'DIRECTORY',
-                       'source': source_dir, 'destination': dest_dir}
+                       'query_data_value': None, 'predicate_type': None, 'action_type': 'COPY', 'data_type': 'DIRECTORY',
+                       'source': source_dir, 'destination': dest_dir, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -50,8 +50,8 @@ def test_move_directory():
 
     # create a test rule
     test_rule: dict = {'name': 'Test - Move file', 'description': 'Move file', 'query_criteria_type': None, 'query_data_type': None,
-                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'MOVE', 'data_type': 'DIRECTORY',
-                       'source': source_dir, 'destination': dest_dir}
+                       'query_data_value': None, 'predicate_type': None, 'action_type': 'MOVE', 'data_type': 'DIRECTORY',
+                       'source': source_dir, 'destination': dest_dir, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -73,8 +73,8 @@ def test_remove_directory():
 
     # create a test rule
     test_rule: dict = {'name': 'Test - Remove file', 'description': 'Remove file', 'query_criteria_type': None, 'query_data_type': None,
-                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'REMOVE', 'data_type': 'DIRECTORY',
-                       'source': source_dir, 'destination': None}
+                       'query_data_value': None, 'predicate_type': None, 'action_type': 'REMOVE', 'data_type': 'DIRECTORY',
+                       'source': source_dir, 'destination': None, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -93,7 +93,8 @@ def test_remove_directory():
 #     # create a test rule
 #     test_rule: dict = {'name': 'Test - Remove geoserver layer and directory', 'description': 'Remove a GeoServer layer and directory',
 #                        'query_criteria_type': None, 'query_data_type': None, 'query_data_value': None, 'predicate_type': None,
-#                       'sync_system_type': 'GEOSERVER', 'action_type': 'REMOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None}
+#                       'sync_system_type': 'GEOSERVER', 'action_type': 'REMOVE', 'data_type': 'DIRECTORY', 'source': source_dir,
+#                       'destination': None, 'debug': False}
 #
 #     # run the rule
 #     process_stats = run_rule(test_rule)

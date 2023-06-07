@@ -68,6 +68,9 @@ class ActionType(int, Enum):
     SWEEP_MOVE = 5
     SWEEP_COPY = 6
     SWEEP_REMOVE = 7
+    GEOSERVER_MOVE = 8
+    GEOSERVER_COPY = 9
+    GEOSERVER_REMOVE = 10
     NONE = 99
 
 

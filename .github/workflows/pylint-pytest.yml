@@ -27,10 +27,6 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-#      # cache the docker layers. this has a known issue so continue on error is ok
-#      - uses: satackey/action-docker-layer-caching@v0.0.11
-#        continue-on-error: true
-
       # build the image
       - name: Build docker image
         run: docker build -t archiver-testing -f Dockerfile.test .
@@ -60,10 +56,6 @@ jobs:
       # checkout the codebase
       - name: Checkout the repository
         uses: actions/checkout@v2
-
-      # cache the docker layers. this has a known issue so continue on error is ok
-#      - uses: satackey/action-docker-layer-caching@v0.0.11
-#        continue-on-error: true
 
       # build the image
       - name: Build docker image

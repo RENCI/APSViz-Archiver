@@ -64,7 +64,7 @@ def test_remove_adcirc_obs_stations():
                f"added_record;"
 
     # make the db request
-    ret_val = db_info.exec_sql(db_name[0], sql)
+    ret_val = db_info.exec_sql('adcirc_obs', sql)
 
     # check to see that at least one record was added
     assert ret_val == 1
@@ -73,7 +73,7 @@ def test_remove_adcirc_obs_stations():
     sql = f"SELECT remove_adcirc_obs_stations('{instance_id}')"
 
     # make a db request
-    ret_val = db_info.exec_sql(db_name[0], sql)
+    ret_val = db_info.exec_sql('adcirc_obs', sql)
 
     # check to make sure only one was removed
     assert ret_val == 1

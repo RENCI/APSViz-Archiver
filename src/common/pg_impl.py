@@ -46,9 +46,9 @@ class PGImplementation(PGUtilsMultiConnect):
         # clean up connections and cursors
         PGUtilsMultiConnect.__del__(self)
 
-    def remove_adcirc_obs_stations(self, instance_id) -> bool:
+    def remove_catalog_db_records(self, run_name: str):
         """
-        Removes the adcirc_obs stations that are associated to the instance id.
+        Removes the adcirc_obs stations that are associated to the instance id from the DB.
 
         """
         # init the return value
@@ -59,13 +59,115 @@ class PGImplementation(PGUtilsMultiConnect):
 
         try:
             # build up the sql
-            sql = f"SELECT remove_adcirc_obs_stations('{instance_id}')"
+            sql = f"SELECT remove_catalog_member('{run_name}%')"
 
             # execute the sql
-            ret_val = self.exec_sql('adcirc_obs', sql)
+            sql_ret = self.exec_sql('apsviz', sql)
 
             # check the result
-            if ret_val < 1:
+            if int(sql_ret) < 0:
+                ret_val = False
+
+        except Exception:
+            self.logger.exception("Error detected executing SQL: %s.", sql)
+
+            # set the error code
+            ret_val = False
+
+        # return the success flag
+        return ret_val
+
+    def is_tropical_run(self, run_name: str) -> bool:
+        """
+        Checks to see if this is a tropical (hurricane) run.
+
+        Note that hurricanes aren't worked on. So a True return
+        will force no activity on the run
+
+        :param run_name:
+        :return:
+        """
+        # init the return value
+        ret_val: bool = True
+
+        # init storage for the SQL
+        sql: str = ''
+
+        try:
+            # build up the sql
+            sql = f"SELECT is_tropical_run('{run_name}%')"
+
+            # execute the sql
+            sql_ret = self.exec_sql('apsviz', sql)
+
+            # check the return
+            if 'result' in sql_ret:
+                # return whatever the result is
+                ret_val = sql_ret['result']
+            # this is an error
+            else:
+                ret_val = True
+
+        except Exception:
+            self.logger.exception("Error detected executing SQL: %s.", sql)
+
+            # set the error code
+            ret_val = True
+
+        # return the success flag
+        return ret_val
+
+    def remove_run_props_db_image_records(self, run_name: str):
+        """
+        Removes the asgs dashboard image run props that are associated to the instance id from the DB.
+
+        """
+        # init the return value
+        ret_val: bool = True
+
+        # init storage for the SQL
+        sql: str = ''
+
+        try:
+            # build up the sql
+            sql = f"SELECT remove_image_run_props('{run_name}')"
+
+            # execute the sql
+            sql_ret = self.exec_sql('asgs', sql)
+
+            # check the result
+            if sql_ret < 0:
+                ret_val = False
+
+        except Exception:
+            self.logger.exception("Error detected executing SQL: %s.", sql)
+
+            # set the error code
+            ret_val = False
+
+        # return the success flag
+        return ret_val
+
+    def remove_obs_mod_db_records(self, run_name: str) -> bool:
+        """
+        Removes the adcirc_obs stations that are associated to the instance id from the DB.
+
+        """
+        # init the return value
+        ret_val: bool = True
+
+        # init storage for the SQL
+        sql: str = ''
+
+        try:
+            # build up the sql
+            sql = f"SELECT * FROM remove_adcirc_obs_stations('{run_name}')"
+
+            # execute the sql
+            sql_ret = self.exec_sql('adcirc_obs', sql)
+
+            # check the result
+            if sql_ret < 0:
                 ret_val = False
 
         except Exception:

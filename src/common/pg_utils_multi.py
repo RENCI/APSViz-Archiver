@@ -66,12 +66,13 @@ class PGUtilsMultiConnect:
             # get the connection string
             conn_config = self.get_conn_config(db_name)
 
-            # create a temporary tuple to get the discovery process started
-            temp_tuple: namedtuple = self.db_info_tpl(db_name, conn_config, None)
+            # if a connection configuration was returned
+            if conn_config:
+                # create a temporary tuple to get the discovery process started
+                temp_tuple: namedtuple = self.db_info_tpl(db_name, conn_config, None)
 
-            # get the connection
-            self.get_db_connection(temp_tuple)
-
+                # get the connection
+                self.get_db_connection(temp_tuple)
 
     def __del__(self):
         """
@@ -118,10 +119,14 @@ class PGUtilsMultiConnect:
         password: str = os.environ.get(f'{db_name}_DB_PASSWORD')
         dbname: str = os.environ.get(f'{db_name}_DB_DATABASE')
         host: str = os.environ.get(f'{db_name}_DB_HOST')
-        port: int = int(os.environ.get(f'{db_name}_DB_PORT'))
+        port: int = int(os.environ.get(f'{db_name}_DB_PORT', 0))
 
-        # create a connection string
-        connection_str: str = f"host={host} port={port} dbname={dbname} user={user} password={password}"
+        # if a legit port was obtained
+        if port > 0:
+            # create a connection string
+            connection_str: str = f"host={host} port={port} dbname={dbname} user={user} password={password}"
+        else:
+            connection_str = None
 
         # return to the caller
         return connection_str
@@ -157,8 +162,10 @@ class PGUtilsMultiConnect:
                     good_conn = self.check_db_connection(verified_tuple)
 
                     # is the connection ok now?
-                    if good_conn:
-                        self.logger.info('DB Connection established (auto commit %s) to %s.', self.auto_commit, db_info.name)
+                    if not good_conn:
+                        self.logger.warning('DB Connection not established (auto commit %s) to %s.', self.auto_commit, db_info.name)
+                    else:
+                        self.logger.debug('DB Connection established (auto commit %s) to %s.', self.auto_commit, db_info.name)
 
                         # add the verified connection to the dict
                         self.dbs.update({db_info.name: verified_tuple})
@@ -194,6 +201,9 @@ class PGUtilsMultiConnect:
         try:
             # is there an existing connection
             if not db_info.conn:
+                self.logger.debug('Existing DB connection not found for %s', db_info.name)
+
+                # force getting a new connection
                 ret_val = False
             else:
                 # get the cursor
@@ -208,19 +218,20 @@ class PGUtilsMultiConnect:
                 # set the success (or not) flag
                 ret_val = bool(db_version)
 
-        except Exception:
-            self.logger.error('Error general DB connection issue')
-
-            # connection failed
-            ret_val = False
         except psycopg2.DatabaseError:
-            self.logger.error('Error database error checking DB connection')
+            self.logger.debug('Error database error checking DB connection.')
 
             # connection failed
             ret_val = False
 
         except psycopg2.InterfaceError:
-            self.logger.error('Error database interface error checking DB connection')
+            self.logger.debug('Error database interface error checking DB connection.')
+
+            # connection failed
+            ret_val = False
+
+        except Exception:
+            self.logger.debug('General DB connection issue. Probably connection time out.')
 
             # connection failed
             ret_val = False
@@ -261,15 +272,15 @@ class PGUtilsMultiConnect:
                 cursor.execute(sql_stmt)
 
                 # get the returned value
-                ret_val = cursor.fetchone()
+                ret_data = cursor.fetchone()
 
                 # trap the return
-                if ret_val is None or ret_val[0] is None:
+                if ret_data is None or ret_data[0] is None:
                     # specify a return code on an empty result
-                    ret_val = -1
+                    ret_val = 0
                 else:
                     # get the one and only record of json
-                    ret_val = ret_val[0]
+                    ret_val = ret_data[0]
 
             except Exception:
                 self.logger.exception("Error detected executing SQL: %s.", sql_stmt)

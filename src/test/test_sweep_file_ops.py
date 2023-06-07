@@ -36,8 +36,8 @@ def test_copy_file_sweep():
 
     # create a test rule
     test_rule: dict = {'name': 'Test - Copy file Sweep BY_AGE', 'description': 'File copy BY_AGE.', 'query_criteria_type': 'BY_AGE',
-                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
-                       'action_type': 'SWEEP_COPY', 'data_type': 'FILE', 'source': source_dir, 'destination': dest_dir}
+                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN',
+                       'action_type': 'SWEEP_COPY', 'data_type': 'FILE', 'source': source_dir, 'destination': dest_dir, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -77,8 +77,8 @@ def test_move_file_sweep():
 
     # create a test rule
     test_rule: dict = {'name': 'Test - Move file Sweep BY_AGE', 'description': 'File move BY_AGE.', 'query_criteria_type': 'BY_AGE',
-                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
-                       'action_type': 'SWEEP_MOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': dest_dir}
+                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN',
+                       'action_type': 'SWEEP_MOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': dest_dir, 'debug': False}
 
     # get a list of the contents of the source directory that will be moved
     entities = os.listdir(source_dir)
@@ -106,8 +106,8 @@ def test_remove_file_sweep():
 
     # create a test rule
     test_rule: dict = {'name': 'Test - Remove files sweep BY_AGE', 'description': 'Remove files BY_AGE.', 'query_criteria_type': 'BY_AGE',
-                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN', 'sync_system_type': None,
-                       'action_type': 'SWEEP_REMOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': None}
+                       'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN',
+                       'action_type': 'SWEEP_REMOVE', 'data_type': 'FILE', 'source': source_dir, 'destination': None, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)

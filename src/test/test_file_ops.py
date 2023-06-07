@@ -26,8 +26,8 @@ def test_copy_file():
 
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Copy Test file', 'description': '', 'query_criteria_type': None, 'query_data_type': None,
-                       'query_data_value': 1, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY', 'data_type': 'FILE',
-                       'source': source, 'destination': dest}
+                       'query_data_value': 1, 'predicate_type': None, 'action_type': 'COPY', 'data_type': 'FILE',
+                       'source': source, 'destination': dest, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -46,8 +46,8 @@ def test_copy_file():
 
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Copying Test file with different name', 'description': '', 'query_criteria_type': None,
-                       'query_data_type': None, 'query_data_value': 1, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY',
-                       'data_type': 'FILE', 'source': source, 'destination': dest}
+                       'query_data_type': None, 'query_data_value': 1, 'predicate_type': None, 'action_type': 'COPY',
+                       'data_type': 'FILE', 'source': source, 'destination': dest, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -69,8 +69,8 @@ def test_move_file():
 
     # create a test rule
     test_rule: dict = {'name': 'Test - Move file', 'description': 'Move file', 'query_criteria_type': None, 'query_data_type': None,
-                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'MOVE', 'data_type': 'FILE',
-                       'source': source, 'destination': dest}
+                       'query_data_value': None, 'predicate_type': None, 'action_type': 'MOVE', 'data_type': 'FILE',
+                       'source': source, 'destination': dest, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -91,8 +91,8 @@ def test_remove_file():
 
     # create a test rule
     test_rule: dict = {'name': 'Test - Remove file', 'description': 'Remove file', 'query_criteria_type': None, 'query_data_type': None,
-                       'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'REMOVE', 'data_type': 'FILE',
-                       'source': source, 'destination': None}
+                       'query_data_value': None, 'predicate_type': None, 'action_type': 'REMOVE', 'data_type': 'FILE',
+                       'source': source, 'destination': None, 'debug': False}
 
     # run the rule
     process_stats = run_rule(test_rule)

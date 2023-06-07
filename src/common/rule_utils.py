@@ -16,8 +16,7 @@ import shutil
 import time
 
 from collections import namedtuple
-from src.common.rule_enums import DataType, QueryCriteriaType, PredicateType, ActionType, QueryDataType, SyncSystemType
-from src.common.geoserver_utils import GeoServerUtils
+from src.common.rule_enums import DataType, QueryCriteriaType, PredicateType, ActionType, QueryDataType
 from src.common.logger import LoggingUtil
 
 
@@ -27,7 +26,7 @@ class RuleUtils:
     """
     # define a named tuple where a rule can be housed
     Rule: namedtuple = namedtuple('Rule', ['name', 'description', 'query_criteria_type', 'query_data_type', 'query_data_value', 'predicate_type',
-                                           'sync_system_type', 'action_type', 'data_type', 'source', 'destination'])
+                                           'action_type', 'data_type', 'source', 'destination', 'debug'])
 
     """
     Rule utility methods used for components in this project.
@@ -79,10 +78,6 @@ class RuleUtils:
             # preform the move
             shutil.move(new_source, rule.destination)
 
-            # if there is an external system sync that has to occur
-            if rule.sync_system_type is not None:
-                ret_val = self.handle_system_sync(rule)
-
             # set the return value
             ret_val = True
 
@@ -101,38 +96,12 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    @staticmethod
-    def handle_system_sync(rule: Rule):
-        """
-        Handles a system sync operation.
-
-        :param rule:
-        :return:
-        """
-        # init the return value
-        success = True
-
-        # what kind of system sync are we doing
-        if rule.sync_system_type == SyncSystemType.GEOSERVER:
-            # what kind of operation was this
-            if rule.action_type == ActionType.REMOVE:
-                # get a handle to the geoserver utils
-                geo_svr: GeoServerUtils = GeoServerUtils()
-
-                # get the layer name. it should be the last part of the source
-                coverage_store_name = ''
-
-                # remove the layer
-                success: bool = geo_svr.remove_coverage_store(coverage_store_name)
-
-        # return the result
-        return success
-
-    def move_directory(self, rule: Rule, opt_name: str = None) -> bool:
+    def move_directory(self, rule_source: str, rule_destination: str, opt_name: str = None) -> bool:
         """
         Moves the directory from source to destination
 
-        :param rule:
+        :param rule_source:
+        :param rule_destination:
         :param opt_name:
         :return:
         """
@@ -140,15 +109,15 @@ class RuleUtils:
         ret_val: bool = False
 
         # init the final directories
-        new_source = rule.source
-        new_destination = rule.destination
+        new_source = rule_source
+        new_destination = rule_destination
 
         try:
             # is there more to this source sweep operation
             if opt_name:
                 # append the sweep dir
-                new_source = os.path.join(rule.source, opt_name)
-                new_destination = os.path.join(rule.destination, opt_name)
+                new_source = os.path.join(rule_source, opt_name)
+                new_destination = os.path.join(rule_destination, opt_name)
 
             # log the targets
             self.logger.debug('Source: %s, destination: %s', new_source, new_destination)
@@ -220,11 +189,12 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    def copy_directory(self, rule: Rule, opt_name: str = None) -> bool:
+    def copy_directory(self, rule_source: str, rule_destination: str, opt_name: str = None) -> bool:
         """
         copies a directory from source to destination
 
-        :param rule:
+        :param rule_source:
+        :param rule_destination:
         :param opt_name:
         :return:
         """
@@ -232,15 +202,15 @@ class RuleUtils:
         ret_val: bool = False
 
         # init the final directories
-        new_source = rule.source
-        new_destination = rule.destination
+        new_source = rule_source
+        new_destination = rule_destination
 
         try:
             # is there more to this source sweep operation
             if opt_name:
                 # append the sweep dir
-                new_source = os.path.join(rule.source, opt_name)
-                new_destination = os.path.join(rule.destination, opt_name)
+                new_source = os.path.join(rule_source, opt_name)
+                new_destination = os.path.join(rule_destination, opt_name)
 
             # log the targets
             self.logger.debug('Source: %s, destination: %s', new_source, new_destination)
@@ -261,7 +231,7 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    def remove_file(self, rule, opt_name: str = None) -> bool:
+    def remove_file(self, rule: Rule, opt_name: str = None) -> bool:
         """
         remove a file
 
@@ -295,11 +265,11 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    def remove_directory(self, rule, opt_name: str = None) -> bool:
+    def remove_directory(self, rule_source: str, opt_name: str = None) -> bool:
         """
         remove a directory
 
-        :param rule:
+        :param rule_source:
         :param opt_name:
         :return:
         """
@@ -307,12 +277,12 @@ class RuleUtils:
         ret_val: bool = False
 
         # init the final directory
-        new_source = rule.source
+        new_source = rule_source
 
         try:
             # append the optional file name if exists
             if opt_name:
-                new_source = os.path.join(rule.source, opt_name)
+                new_source = os.path.join(rule_source, opt_name)
 
             # log the targets
             self.logger.debug('Source: %s', new_source)
@@ -324,7 +294,7 @@ class RuleUtils:
             ret_val = True
 
         except Exception:
-            self.logger.exception('Error: General exception detected during a file remove.')
+            self.logger.exception('Error: General exception detected during a file directory remove.')
 
         # return to the caller
         return ret_val
@@ -466,7 +436,6 @@ class RuleUtils:
                     if rule['query_criteria_type'] is not None else QueryCriteriaType.NONE
                 rule['query_data_type'] = QueryDataType[rule['query_data_type']] if rule['query_data_type'] is not None else QueryDataType.NONE
                 rule['predicate_type'] = PredicateType[rule['predicate_type']] if rule['predicate_type'] is not None else PredicateType.NONE
-                rule['sync_system_type'] = SyncSystemType[rule['sync_system_type']] if rule['sync_system_type'] is not None else SyncSystemType.NONE
                 rule['action_type'] = ActionType[rule['action_type']] if rule['action_type'] is not None else ActionType.NONE
                 rule['data_type'] = DataType[rule['data_type']] if rule['data_type'] is not None else DataType.NONE
 
@@ -488,6 +457,9 @@ class RuleUtils:
                     elif the_rule.action_type in [ActionType.SWEEP_COPY, ActionType.SWEEP_MOVE, ActionType.SWEEP_REMOVE] and not os.path.isfile(
                             the_rule.source):
                         success = True
+                    elif the_rule.action_type in [ActionType.GEOSERVER_COPY, ActionType.GEOSERVER_MOVE, ActionType.GEOSERVER_REMOVE]:
+                        success = True
+
                     else:
                         self.logger.error('Error: Rule data missing or does not match the expected type.')
 

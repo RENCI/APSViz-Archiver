@@ -22,9 +22,27 @@ input_path = os.path.dirname(__file__)
 output_path = os.getenv('TESTDATA_PATH', os.path.dirname(__file__))
 
 
+def geoserver_init():
+    """
+    creates test data for this series of sweep tests
+
+    :return:
+    """
+    # source location of all test files
+    source: str = os.path.join(input_path, 'geoserver_files')
+
+    # location of destination directory
+    dest_dir: str = os.path.join(output_path, 'geoserver_out/')
+
+    print(f'source directory: {source}, destination directory: {dest_dir}')
+
+    # pause so that the data ages long enough so age tests work
+    sleep(3)
+
+
 def sweeps_init():
     """
-    creates test data for this series of tests
+    creates test data for this series of sweep tests
 
     :return:
     """
@@ -43,11 +61,11 @@ def sweeps_init():
     # prep for directory sweep tests
     test_rules: list = [
         {'name': 'Test - Copy Test file', 'description': '', 'query_criteria_type': None, 'query_data_type': None, 'query_data_value': 1,
-         'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY', 'data_type': 'FILE', 'source': source_file,
-         'destination': dest_dir},
+         'predicate_type': None, 'action_type': 'COPY', 'data_type': 'FILE', 'source': source_file,
+         'destination': dest_dir, 'debug': False},
         {'name': 'Test - Copy directory', 'description': 'Directory creation.', 'query_criteria_type': None, 'query_data_type': None,
-         'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'COPY', 'data_type': 'DIRECTORY',
-         'source': source, 'destination': dest_sub}]
+         'query_data_value': None, 'predicate_type': None, 'action_type': 'COPY', 'data_type': 'DIRECTORY',
+         'source': source, 'destination': dest_sub, 'debug': False}]
 
     # create the run handler
     rule_handler = RuleHandler()
@@ -97,8 +115,8 @@ def cleanup(dirs: list):
 
         # create a test rule
         test_rule: dict = {'name': 'Test - Remove file', 'description': 'Remove file', 'query_criteria_type': None, 'query_data_type': None,
-                           'query_data_value': None, 'predicate_type': None, 'sync_system_type': None, 'action_type': 'REMOVE',
-                           'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None}
+                           'query_data_value': None, 'predicate_type': None, 'action_type': 'REMOVE',
+                           'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None, 'debug': False}
 
         # create the run handler
         rule_handler = RuleHandler()

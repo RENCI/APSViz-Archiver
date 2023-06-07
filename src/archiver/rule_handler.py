@@ -20,6 +20,7 @@ from src.common.rule_enums import ActionType, DataType
 from src.common.general_utils import GeneralUtils
 from src.common.rule_utils import RuleUtils
 from src.common.logger import LoggingUtil
+from src.common.geoserver_utils import GeoServerUtils
 
 
 class RuleHandler:
@@ -44,10 +45,13 @@ class RuleHandler:
             self.logger = LoggingUtil.init_logging("APSVIZ.Archiver.RuleHandler", level=log_level, line_format='medium', log_file_path=log_path)
 
         # create the rule utilities class
-        self.rule_utils = RuleUtils(_logger)
+        self.rule_utils = RuleUtils(self.logger)
 
         # create the general utilities class
-        self.general_utils = GeneralUtils(_logger)
+        self.general_utils = GeneralUtils(self.logger)
+
+        # create the general utilities class
+        self.geoserver_utils = GeoServerUtils(self.logger)
 
     def process_rule_set(self, rule_set: dict) -> dict:
         """
@@ -128,6 +132,17 @@ class RuleHandler:
                 stats['swept'] += 1
             else:
                 stats['failed'] += 1
+
+        elif rule.action_type in (ActionType.GEOSERVER_COPY, ActionType.GEOSERVER_MOVE, ActionType.GEOSERVER_REMOVE):
+            # run the action handler, get the result
+            success, stats = self.geoserver_action(stats, rule)
+
+            # get the result
+            if success:
+                stats['swept'] += 1
+            else:
+                stats['failed'] += 1
+
         # unknown rule action type
         else:
             stats['failed'] += 1
@@ -153,7 +168,7 @@ class RuleHandler:
         # operate on a data directory
         if rule.data_type == DataType.DIRECTORY:
             # perform the directory move
-            ret_val = self.rule_utils.move_directory(rule)
+            ret_val = self.rule_utils.move_directory(rule.source, rule.destination)
 
             # set the return value
             ret_val = True
@@ -183,7 +198,7 @@ class RuleHandler:
         try:
             # operate on a data directory
             if rule.data_type == DataType.DIRECTORY:
-                ret_val = self.rule_utils.copy_directory(rule)
+                ret_val = self.rule_utils.copy_directory(rule.source, rule.destination)
             # operate on a data file
             elif rule.data_type == DataType.FILE:
                 ret_val = self.rule_utils.copy_file(rule)
@@ -215,7 +230,7 @@ class RuleHandler:
         try:
             # operate on a data directory
             if rule.data_type == DataType.DIRECTORY:
-                self.rule_utils.remove_directory(rule)
+                self.rule_utils.remove_directory(rule.source)
             # operate on a data file
             elif rule.data_type == DataType.FILE:
                 self.rule_utils.remove_file(rule)
@@ -229,6 +244,28 @@ class RuleHandler:
 
         # return to the caller
         return ret_val
+
+    def geoserver_action(self, stats: dict, rule: RuleUtils.Rule) -> (bool, dict):
+        """
+        performs geoserver operations
+
+        :param stats:
+        :param rule:
+        :return:
+        """
+        # init the return value
+        ret_val: bool = True
+
+        # check to see if execution params are populated
+        validated = self.rule_utils.validate_criteria_definition(rule)
+
+        # run the rule if it meets criteria
+        if validated:
+            # process the rule
+            ret_val, stats = self.geoserver_utils.process_geoserver_rule(stats, rule)
+
+        # return the success flag
+        return ret_val, stats
 
     def sweep_action(self, rule: RuleUtils.Rule) -> bool:
         """
@@ -273,13 +310,13 @@ class RuleHandler:
                     if self.rule_utils.meets_criteria(rule, entity_details):
                         if rule.action_type == ActionType.SWEEP_MOVE:
                             # move the directory
-                            ret_val = self.rule_utils.move_directory(rule, entity)
+                            ret_val = self.rule_utils.move_directory(rule.source, rule.destination, entity)
                         elif rule.action_type == ActionType.SWEEP_COPY:
                             # move the directory
-                            ret_val = self.rule_utils.copy_directory(rule, entity)
+                            ret_val = self.rule_utils.copy_directory(rule.source, rule.destination, entity)
                         elif rule.action_type == ActionType.SWEEP_REMOVE:
                             # remove the directory
-                            ret_val = self.rule_utils.remove_directory(rule, entity)
+                            ret_val = self.rule_utils.remove_directory(rule.source, entity)
                     else:
                         self.logger.debug('%s data action %s: Entity %s failed to meet criteria in %s.', rule.data_type.name, rule.action_type.name,
                                           entity, rule.source)

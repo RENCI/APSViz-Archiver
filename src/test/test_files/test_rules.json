@@ -15,7 +15,7 @@
           "query_data_type": null,
           "query_data_value": null,
           "predicate_type": null,
-          "sync_system_type": null,
+
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\test_file.txt",
@@ -28,7 +28,7 @@
           "query_data_type": null,
           "query_data_value": null,
           "predicate_type": null,
-          "sync_system_type": null,
+
           "action_type": "COPY",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
@@ -48,7 +48,7 @@
           "query_data_type": "INTEGER",
           "query_data_value": 1,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "SWEEP_MOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
@@ -61,7 +61,7 @@
           "query_data_type": "INTEGER",
           "query_data_value": 1,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "COPY",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir2\\",
@@ -81,7 +81,7 @@
           "query_data_type": "INTEGER",
           "query_data_value": 1,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "SWEEP_COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\",
@@ -94,7 +94,7 @@
           "query_data_type": "INTEGER",
           "query_data_value": 1,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "SWEEP_MOVE",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\dir3\\",
@@ -114,7 +114,7 @@
           "query_data_type": "INTEGER",
           "query_data_value": 1,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "SWEEP_REMOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\",

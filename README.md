@@ -17,9 +17,9 @@ Archives file created by the various APSViz applications and processes.
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 [![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://renci.org/)
 #### Components and versions...
-[![Python](https://img.shields.io/badge/Python-3.11.1-orange)](https://github.com/PyCQA/pylint)
-[![Linting Pylint](https://img.shields.io/badge/Pylint-%202.15.5-yellowgreen)](https://github.com/PyCQA/pylint)
-[![Pytest](https://img.shields.io/badge/Pytest-%207.2.0-yellowgreen)](https://github.com/pytest-dev/pytest)
+[![Python](https://img.shields.io/badge/Python-3.11.3-orange)](https://github.com/PyCQA/pylint)
+[![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.3-yellowgreen)](https://github.com/PyCQA/pylint)
+[![Pytest](https://img.shields.io/badge/Pytest-%207.3.1-yellowgreen)](https://github.com/pytest-dev/pytest)
 #### Build status...
 [![Pylint and Pytest](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml)
 [![Build and push the Docker image](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml)
@@ -59,7 +59,7 @@ A simple Rule example shown below has specified:
           "query_data_type": "INTEGER",
           "query_data_value": 30,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "/source/some-data-file.ext",
@@ -72,7 +72,7 @@ A simple Rule example shown below has specified:
           "query_data_type": "INTEGER",
           "query_data_value": 30,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "MOVE",
           "data_type": "FILE",
           "source": "/dest/some-new-data-location/some-data-file.ext",
@@ -85,7 +85,7 @@ A simple Rule example shown below has specified:
           "query_data_type": "INTEGER",
           "query_data_value": 2,
           "predicate_type": "GREATER_THAN_OR_EQUAL_TO",
-          "sync_system_type": null,
+
           "action_type": "SWEEP_COPY",
           "data_type": "DIRECTORY",
           "source": "/source/root_directory",
