@@ -19,7 +19,8 @@
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\test_file.txt",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\",
+          "debug": "True"
         }
       ]
     },
@@ -39,7 +40,8 @@
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\test_file.txt",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\temp.dat"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\temp.dat",
+          "debug": "True"
         },
         {
           "name": "Test - Move file",
@@ -52,7 +54,8 @@
           "action_type": "MOVE",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\test_file.txt",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\",
+          "debug": "True"
         },
         {
           "name": "Test - Copy file",
@@ -64,7 +67,8 @@
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\dir2\\test_file.txt",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\",
+          "debug": "True"
         },
         {
           "name": "Test - Remove file",
@@ -77,7 +81,8 @@
           "action_type": "REMOVE",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\dir2\\test_file.txt",
-          "destination": null
+          "destination": null,
+          "debug": "True"
         }
      ]
     },
@@ -97,7 +102,8 @@
           "action_type": "MOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir3\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir3\\",
+          "debug": "True"
         },
         {
           "name": "Test - Move directory",
@@ -110,7 +116,8 @@
           "action_type": "MOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir3\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\",
+          "debug": "True"
         },
         {
           "name": "Test - Copy directory",
@@ -123,7 +130,8 @@
           "action_type": "COPY",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir2\\dir3\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\",
+          "debug": "True"
         }
       ]
     },
@@ -143,7 +151,8 @@
           "action_type": "REMOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir2\\",
-          "destination": null
+          "destination": null,
+          "debug": "True"
         },
         {
           "name": "Test - Remove directory",
@@ -156,7 +165,8 @@
           "action_type": "REMOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
-          "destination": null
+          "destination": null,
+          "debug": "True"
         }
       ]
     },
@@ -175,7 +185,8 @@
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\test_file.txt",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\",
+          "debug": "True"
         },
         {
           "name": "Test - Create directory",
@@ -188,7 +199,8 @@
           "action_type": "COPY",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\dirx\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\dirx\\",
+          "debug": "True"
         }
      ]
     },
@@ -208,7 +220,8 @@
           "action_type": "SWEEP_MOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\",
+          "debug": "True"
         },
         {
           "name": "Test - Copy directory Sweep BY_AGE",
@@ -221,7 +234,8 @@
           "action_type": "COPY",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir2\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\",
+          "debug": "True"
         }
       ]
     },
@@ -241,7 +255,8 @@
           "action_type": "SWEEP_COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir3\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir3\\",
+          "debug": "True"
         },
         {
           "name": "Test - Move file Sweep BY_AGE",
@@ -254,7 +269,8 @@
           "action_type": "SWEEP_MOVE",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\dir3\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir4\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir4\\",
+          "debug": "True"
         }
       ]
     },
@@ -274,7 +290,8 @@
           "action_type": "SWEEP_REMOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\",
-          "destination": null
+          "destination": null,
+          "debug": "True"
         }
       ]
     }

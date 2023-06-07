@@ -19,7 +19,8 @@
           "action_type": "COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\test_file.txt",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\",
+          "debug": true
         },
         {
           "name": "Test - Create directory",
@@ -32,7 +33,8 @@
           "action_type": "COPY",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\dirx\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\dirx\\",
+          "debug": true
         }
      ]
     },
@@ -52,7 +54,8 @@
           "action_type": "SWEEP_MOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir1\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir2\\",
+          "debug": true
         },
         {
           "name": "Test - Copy directory Sweep BY_AGE",
@@ -65,7 +68,8 @@
           "action_type": "COPY",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\dir2\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir1\\",
+          "debug": true
         }
       ]
     },
@@ -85,7 +89,8 @@
           "action_type": "SWEEP_COPY",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir3\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir3\\",
+          "debug": true
         },
         {
           "name": "Test - Move file Sweep BY_AGE",
@@ -98,7 +103,8 @@
           "action_type": "SWEEP_MOVE",
           "data_type": "FILE",
           "source": "D:\\dvols\\apsviz\\archiver\\dir3\\",
-          "destination": "D:\\dvols\\apsviz\\archiver\\dir4\\"
+          "destination": "D:\\dvols\\apsviz\\archiver\\dir4\\",
+          "debug": true
         }
       ]
     },
@@ -118,7 +124,8 @@
           "action_type": "SWEEP_REMOVE",
           "data_type": "DIRECTORY",
           "source": "D:\\dvols\\apsviz\\archiver\\",
-          "destination": null
+          "destination": null,
+          "debug": true
         }
       ]
     }
