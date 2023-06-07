@@ -14,7 +14,7 @@
 import os
 from collections import namedtuple
 
-from test_utils import run_rule
+from src.test.test_utils import run_rule
 from src.common.geoserver_utils import GeoServerUtils
 from src.common.rule_utils import RuleUtils
 
@@ -120,6 +120,8 @@ def create_test_dirs(start: int, stop: int, max_count: int):
             else:
                 break
 
+            # get the catalog name
+
             # create a full path for the obsmod file
             full_geo_path = os.path.join(source_dir, store['name'])
 
@@ -149,7 +151,7 @@ def test_geoserver_remove_rule():
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
                        'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': -1, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'not used', 'destination': dest_dir, 'debug': False}
+                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': False}
 
     # create test data
     create_test_dirs(0, 1, 1)
