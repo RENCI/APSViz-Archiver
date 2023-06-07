@@ -1,0 +1,26 @@
+{
+  "rule_definition_name": "APSViz data archival rule set.",
+  "rule_definition_version": "test",
+  "description": "Rules for APSViz data archival.",
+  "rule_sets": [
+    {
+      "rule_set_name": "Test geoserver remove",
+      "description": "Runs a geoserver remove rule",
+      "rules": [
+        {
+          "name": "Test - Remove geoserver entries BY_AGE",
+          "description": "Remove geoserver entries BY_AGE.",
+          "query_criteria_type": "BY_AGE",
+          "query_data_type": "INTEGER",
+          "query_data_value": -1,
+          "predicate_type": "GREATER_THAN",
+          "action_type": "GEOSERVER_REMOVE",
+          "data_type": "NONE",
+          "source": "N/A",
+          "destination": "N/A",
+          "debug": true
+        }
+      ]
+    }
+  ]
+}
