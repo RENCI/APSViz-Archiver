@@ -50,6 +50,8 @@ jobs:
         GEOSERVER_URL: ${{ secrets.GEOSERVER_URL }}
         GEOSERVER_USER: ${{ secrets.GEOSERVER_USER }}
         GEOSERVER_WORKSPACE: ${{ secrets.GEOSERVER_WORKSPACE }}
+        GEOSERVER_PROJ_PATH: ${{ secrets.GEOSERVER_PROJ_PATH }}
+        FILESERVER_OBS_PATH: ${{ secrets.FILESERVER_OBS_PATH }}
 
     # job steps
     steps:
