@@ -22,24 +22,6 @@ input_path = os.path.dirname(__file__)
 output_path = os.getenv('TESTDATA_PATH', os.path.dirname(__file__))
 
 
-def geoserver_init():
-    """
-    creates test data for this series of sweep tests
-
-    :return:
-    """
-    # source location of all test files
-    source: str = os.path.join(input_path, 'geoserver_files')
-
-    # location of destination directory
-    dest_dir: str = os.path.join(output_path, 'geoserver_out/')
-
-    print(f'source directory: {source}, destination directory: {dest_dir}')
-
-    # pause so that the data ages long enough so age tests work
-    sleep(3)
-
-
 def sweeps_init():
     """
     creates test data for this series of sweep tests

@@ -21,18 +21,50 @@ from src.common.rule_utils import RuleUtils
 # init the full coverage store name (aka instance id e.g. 4303-2023020206-namforecast_maxele63)
 instance_id: str = 'test_store'
 
-# get some test directory names
-geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH')
-geoserver_catalog_name: str = os.environ.get('GEOSERVER_WORKSPACE')
+# get the geoserver workspace name
+geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE')
 
-# get a test location for obs data files
-obs_proj_dir: str = os.environ.get('FILESERVER_OBS_PATH')
+# get the working directory name
+input_path = os.path.dirname(__file__)
+
+# get a test directory for the geoserver files
+geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH')
+
+# get the base path of the test data
+base_path = os.path.join(input_path, geoserver_proj_path)
+
+# save the new base path
+os.environ['GEOSERVER_PROJ_PATH'] = base_path
+
+# get a test directory for obs data files
+obs_proj_path: str = os.environ.get('FILESERVER_OBS_PATH')
+
+# get the location of the obs mod data
+obs_proj_dir = os.path.join(base_path, obs_proj_path)
+
+# save the new obs data path
+os.environ['FILESERVER_OBS_PATH'] = obs_proj_dir
 
 # source location of all test files
-source_dir: str = os.path.join(geoserver_proj_path, geoserver_catalog_name)
+source_dir: str = os.path.join(base_path, geoserver_workspace)
 
 # location of destination directory
-dest_dir: str = os.path.join(geoserver_proj_path, 'geoserver_out/')
+dest_dir: str = os.path.join(base_path, 'geoserver_out')
+
+# check if the geoserver directory exists
+if not os.path.exists(source_dir):
+    # create the geoserver directory
+    os.makedirs(source_dir)
+
+# check if the obsmod directory exists
+if not os.path.exists(dest_dir):
+    # create the obs/mod directory
+    os.makedirs(dest_dir)
+
+# check if the obsmod directory exists
+if not os.path.exists(obs_proj_dir):
+    # create the obs/mod directory
+    os.makedirs(obs_proj_dir)
 
 
 def create_geoserver_store(store_type: str) -> bool:
@@ -120,8 +152,6 @@ def create_test_dirs(start: int, stop: int, max_count: int):
             else:
                 break
 
-            # get the catalog name
-
             # create a full path for the obsmod file
             full_geo_path = os.path.join(source_dir, store['name'])
 
@@ -139,7 +169,7 @@ def create_test_dirs(start: int, stop: int, max_count: int):
             # if the directory doesn't exist
             if not os.path.exists(full_obs_path):
                 # create an obsmod directory
-                os.mkdir(os.path.join(obs_proj_dir, obs_instance_id))
+                os.mkdir(full_obs_path)
 
 
 def test_geoserver_remove_rule():
@@ -151,7 +181,7 @@ def test_geoserver_remove_rule():
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
                        'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': -1, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': False}
+                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': True}
 
     # create test data
     create_test_dirs(0, 1, 1)

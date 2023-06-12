@@ -13,6 +13,7 @@
 import sys
 import argparse
 from src.archiver.archiver import APSVizArchiver
+from src.test.test_geoserver_ops import create_test_dirs
 
 
 def run_rule_file(rule_file: str) -> bool:
@@ -25,6 +26,10 @@ def run_rule_file(rule_file: str) -> bool:
 
     # create the archiver
     archiver = APSVizArchiver(rule_file)
+
+    # TODO: if this is a debug geoserver run add some directory data
+    if archiver.debug and rule_file.find('geoserver') > -1:
+        create_test_dirs(0, 1, 1)
 
     # initiate the archiver. return value of True indicates success
     retval: bool = archiver.run()
@@ -46,8 +51,10 @@ if __name__ == '__main__':
     # parse the command line
     args = parser.parse_args()
 
-    # example input
-    # 'test/test_files/test_rules.json,test/test_files/test_all_rules.json'
+    # example inputs
+    # './src/test/test_files/test_rules.json,./src/test/test_files/test_all_rules.json'
+    # './src/test/test_files/test_criteria.rules2.json'
+    # './src/test/test_files/test_geoserver_remove_rule.json'
 
     # execute the rule file(s)
     ret_val: bool = run_rule_file(args.filename)
