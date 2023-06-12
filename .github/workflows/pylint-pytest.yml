@@ -27,16 +27,21 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      # build the image
-      - name: Build docker image
-        run: docker build -t archiver-testing -f Dockerfile.test .
+      - name: Python Pylint GitHub Action
+        uses: fylein/python-pylint-github-action@v1
+        with:
+          args: pip3 install -r requirements.txt && pylint --rcfile=.pylintrc --recursive=y ./
 
-      # run pylint
-      - name: Run pylint and get the output
-        run: |
-          echo 'LINT_OUTPUT<<EOF' >> $GITHUB_ENV
-          echo "$(docker run archiver-testing pylint --rcfile=.pylintrc --recursive=y ./)" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+#      # build the image
+#      - name: Build docker image
+#        run: docker build -t archiver-testing -f Dockerfile.test .
+#
+#      # run pylint
+#      - name: Run pylint and get the output
+#        run: |
+#          echo 'LINT_OUTPUT<<EOF' >> $GITHUB_ENV
+#          echo "$(docker run archiver-testing pylint --rcfile=.pylintrc --recursive=y ./)" >> $GITHUB_ENV
+#          echo 'EOF' >> $GITHUB_ENV
 
   # runs pytest
   test:
