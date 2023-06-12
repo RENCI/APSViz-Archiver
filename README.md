@@ -21,7 +21,7 @@ Archives file created by the various APSViz applications and processes.
 [![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.3-yellowgreen)](https://github.com/PyCQA/pylint)
 [![Pytest](https://img.shields.io/badge/Pytest-%207.3.1-yellowgreen)](https://github.com/pytest-dev/pytest)
 #### Build status...
-[![Pylint and Pytest](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-test.yml)
+[![Pylint and Pytest](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-pytest.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-pytest.yml)
 [![Build and push the Docker image](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml)
 
 ## Description
