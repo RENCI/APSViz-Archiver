@@ -6,9 +6,9 @@
 # SPDX-License-Identifier: MIT
 
 [MASTER]
+init-hook='import sys; sys.path.append("./")'
 max-line-length=150
 disable=broad-except
-init-hook='import sys; sys.path.append("./")'
 max-attributes=15
 max-args=7
 max-statements=50
