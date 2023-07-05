@@ -168,7 +168,7 @@ class RuleHandler:
         # operate on a data directory
         if rule.data_type == DataType.DIRECTORY:
             # perform the directory move
-            ret_val = self.rule_utils.move_directory(rule.source, rule.destination)
+            ret_val = self.rule_utils.move_directory(rule, rule.source, rule.destination)
 
             # set the return value
             ret_val = True
@@ -198,7 +198,7 @@ class RuleHandler:
         try:
             # operate on a data directory
             if rule.data_type == DataType.DIRECTORY:
-                ret_val = self.rule_utils.copy_directory(rule.source, rule.destination)
+                ret_val = self.rule_utils.copy_directory(rule, rule.source, rule.destination)
             # operate on a data file
             elif rule.data_type == DataType.FILE:
                 ret_val = self.rule_utils.copy_file(rule)
@@ -230,7 +230,7 @@ class RuleHandler:
         try:
             # operate on a data directory
             if rule.data_type == DataType.DIRECTORY:
-                self.rule_utils.remove_directory(rule.source)
+                self.rule_utils.remove_directory(rule, rule.source)
             # operate on a data file
             elif rule.data_type == DataType.FILE:
                 self.rule_utils.remove_file(rule)
@@ -310,13 +310,13 @@ class RuleHandler:
                     if self.rule_utils.meets_criteria(rule, entity_details):
                         if rule.action_type == ActionType.SWEEP_MOVE:
                             # move the directory
-                            ret_val = self.rule_utils.move_directory(rule.source, rule.destination, entity)
+                            ret_val = self.rule_utils.move_directory(rule, rule.source, rule.destination, entity)
                         elif rule.action_type == ActionType.SWEEP_COPY:
                             # move the directory
-                            ret_val = self.rule_utils.copy_directory(rule.source, rule.destination, entity)
+                            ret_val = self.rule_utils.copy_directory(rule, rule.source, rule.destination, entity)
                         elif rule.action_type == ActionType.SWEEP_REMOVE:
                             # remove the directory
-                            ret_val = self.rule_utils.remove_directory(rule.source, entity)
+                            ret_val = self.rule_utils.remove_directory(rule, rule.source, entity)
                     else:
                         self.logger.debug('%s data action %s: Entity %s failed to meet criteria in %s.', rule.data_type.name, rule.action_type.name,
                                           entity, rule.source)

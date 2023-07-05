@@ -21,6 +21,9 @@ from src.common.rule_enums import DataType
 input_path = os.path.dirname(__file__)
 output_path = os.getenv('TESTDATA_PATH', os.path.dirname(__file__))
 
+# set the global test mode
+test_mode: bool = False
+
 
 def sweeps_init():
     """
@@ -44,10 +47,10 @@ def sweeps_init():
     test_rules: list = [
         {'name': 'Test - Copy Test file', 'description': '', 'query_criteria_type': None, 'query_data_type': None, 'query_data_value': 1,
          'predicate_type': None, 'action_type': 'COPY', 'data_type': 'FILE', 'source': source_file,
-         'destination': dest_dir, 'debug': False},
+         'destination': dest_dir, 'debug': test_mode},
         {'name': 'Test - Copy directory', 'description': 'Directory creation.', 'query_criteria_type': None, 'query_data_type': None,
          'query_data_value': None, 'predicate_type': None, 'action_type': 'COPY', 'data_type': 'DIRECTORY',
-         'source': source, 'destination': dest_sub, 'debug': False}]
+         'source': source, 'destination': dest_sub, 'debug': test_mode}]
 
     # create the run handler
     rule_handler = RuleHandler()

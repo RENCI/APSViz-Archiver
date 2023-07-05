@@ -14,6 +14,9 @@ import os.path
 
 from test_utils import output_path, sweeps_init, cleanup, run_rule
 
+# set the global test mode
+test_mode: bool = False
+
 
 def test_init():
     """
@@ -37,7 +40,7 @@ def test_move_directory_sweep():
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Move directory Sweep BY_AGE', 'description': 'Directory move BY_AGE.', 'query_criteria_type': 'BY_AGE',
                        'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN',
-                       'action_type': 'SWEEP_MOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': dest_dir, 'debug': False}
+                       'action_type': 'SWEEP_MOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': dest_dir, 'debug': test_mode}
 
     # get a list of the contents of the source directory
     entities = os.listdir(os.path.join(source_dir, 'sweep_sub'))
@@ -69,7 +72,7 @@ def test_copy_directory_sweep():
     # create a test rule
     test_rule: dict = {'name': 'Test - Copy directory Sweep BY_AGE', 'description': 'Directory copy BY_AGE.', 'query_criteria_type': 'BY_AGE',
                        'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN',
-                       'action_type': 'SWEEP_COPY', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': dest_dir, 'debug': False}
+                       'action_type': 'SWEEP_COPY', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': dest_dir, 'debug': test_mode}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -98,7 +101,7 @@ def test_remove_directory_sweep():
     # create a test rule
     test_rule: dict = {'name': 'Test - Copy directory Sweep BY_AGE', 'description': 'Directory copy BY_AGE.', 'query_criteria_type': 'BY_AGE',
                        'query_data_type': 'INTEGER', 'query_data_value': 1, 'predicate_type': 'LESS_THAN',
-                       'action_type': 'SWEEP_REMOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None, 'debug': False}
+                       'action_type': 'SWEEP_REMOVE', 'data_type': 'DIRECTORY', 'source': source_dir, 'destination': None, 'debug': test_mode}
 
     # run the rule
     process_stats = run_rule(test_rule)

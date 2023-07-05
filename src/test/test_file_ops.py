@@ -13,6 +13,9 @@
 import os.path
 from test_utils import input_path, output_path, cleanup, run_rule
 
+# set the global test mode
+test_mode: bool = False
+
 
 def test_copy_file():
     """
@@ -27,7 +30,7 @@ def test_copy_file():
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Copy Test file', 'description': '', 'query_criteria_type': None, 'query_data_type': None,
                        'query_data_value': 1, 'predicate_type': None, 'action_type': 'COPY', 'data_type': 'FILE',
-                       'source': source, 'destination': dest, 'debug': False}
+                       'source': source, 'destination': dest, 'debug': test_mode}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -47,7 +50,7 @@ def test_copy_file():
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Copying Test file with different name', 'description': '', 'query_criteria_type': None,
                        'query_data_type': None, 'query_data_value': 1, 'predicate_type': None, 'action_type': 'COPY',
-                       'data_type': 'FILE', 'source': source, 'destination': dest, 'debug': False}
+                       'data_type': 'FILE', 'source': source, 'destination': dest, 'debug': test_mode}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -70,7 +73,7 @@ def test_move_file():
     # create a test rule
     test_rule: dict = {'name': 'Test - Move file', 'description': 'Move file', 'query_criteria_type': None, 'query_data_type': None,
                        'query_data_value': None, 'predicate_type': None, 'action_type': 'MOVE', 'data_type': 'FILE',
-                       'source': source, 'destination': dest, 'debug': False}
+                       'source': source, 'destination': dest, 'debug': test_mode}
 
     # run the rule
     process_stats = run_rule(test_rule)
@@ -92,7 +95,7 @@ def test_remove_file():
     # create a test rule
     test_rule: dict = {'name': 'Test - Remove file', 'description': 'Remove file', 'query_criteria_type': None, 'query_data_type': None,
                        'query_data_value': None, 'predicate_type': None, 'action_type': 'REMOVE', 'data_type': 'FILE',
-                       'source': source, 'destination': None, 'debug': False}
+                       'source': source, 'destination': None, 'debug': test_mode}
 
     # run the rule
     process_stats = run_rule(test_rule)

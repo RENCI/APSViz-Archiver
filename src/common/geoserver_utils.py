@@ -344,12 +344,19 @@ class GeoServerUtils:
                 # get the
                 instance_id: str = full_instance_id.split('_')[0]
 
-                # is this a tropical (hurricane) run
-                if not self.db_info.is_tropical_run(instance_id) or rule.debug:
+                # if we aren't in debug mode do the check
+                if not rule.debug:
+                    # is this a tropical (hurricane) run
+                    if not self.db_info.is_tropical_run(instance_id):
+                        # add this entity to the list of instances to process
+                        ret_val.add(instance_id)
+                    else:
+                        self.logger.debug('Warning: %s was detected to be a tropical run. No processing will occur on this item.', instance_id)
+                else:
                     # add this entity to the list of instances to process
                     ret_val.add(instance_id)
-                else:
-                    self.logger.debug('Warning: %s was detected to be a tropical run. No processing will occur on this item.', instance_id)
+
+                    self.logger.warning('Warning: Debug mode made %s a valid entity.', full_instance_id)
 
         # return to the caller
         return ret_val
@@ -391,27 +398,27 @@ class GeoServerUtils:
 
                         # process the geoserver directories
                         for entity in entities:
-                            success = success and self.rule_utils.copy_directory(entity, os.path.join(new_dest, 'obsmod'))
+                            success = success and self.rule_utils.copy_directory(rule, entity, os.path.join(new_dest, 'obsmod'))
 
                         # process the obs/mod directory
-                        success = success and self.rule_utils.copy_directory(obs_mod_dir, new_dest)
+                        success = success and self.rule_utils.copy_directory(rule, obs_mod_dir, new_dest)
                     elif rule.action_type == ActionType.GEOSERVER_MOVE:
                         # TODO: use real target dir here too?
                         new_dest: str = ''
 
                         # process the geoserver directories
                         for entity in entities:
-                            success = success and self.rule_utils.move_directory(entity, new_dest)
+                            success = success and self.rule_utils.move_directory(rule, entity, new_dest)
 
                         # process the obs/mod directory
-                        success = success and self.rule_utils.move_directory(obs_mod_dir, new_dest)
+                        success = success and self.rule_utils.move_directory(rule, obs_mod_dir, new_dest)
                     elif rule.action_type == ActionType.GEOSERVER_REMOVE:
                         # process the geoserver directories
                         for entity in entities:
-                            success = success and self.rule_utils.remove_directory(entity)
+                            success = success and self.rule_utils.remove_directory(rule, entity)
 
                         # process the obs/mod directory
-                        success = success and self.rule_utils.remove_directory(obs_mod_dir)
+                        success = success and self.rule_utils.remove_directory(rule, obs_mod_dir)
 
                 # check the return
                 if not success:

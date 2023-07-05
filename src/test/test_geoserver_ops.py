@@ -66,6 +66,9 @@ if not os.path.exists(obs_proj_dir):
     # create the obs/mod directory
     os.makedirs(obs_proj_dir)
 
+# set the global test mode
+test_mode: bool = True
+
 
 def create_geoserver_store(store_type: str) -> bool:
     """
@@ -100,7 +103,7 @@ def remove_geoserver_store(store_type: str) -> bool:
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
                        'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': -1, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'not used', 'destination': dest_dir, 'debug': True}
+                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'not used', 'destination': dest_dir, 'debug': test_mode}
 
     # create a rule utility
     rule_utils = RuleUtils()
@@ -133,8 +136,8 @@ def create_test_dirs(start: int, stop: int, max_count: int):
     # get the coverage stores list
     stores = geo_svr.get_geoserver_stores_like_instance_id('coverageStores')
 
-    def rec_sort(a):
-        return a['name']
+    def rec_sort(entry):
+        return entry['name']
 
     # get the items in order
     stores.sort(key=rec_sort)
@@ -180,8 +183,8 @@ def test_geoserver_remove_rule():
     """
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
-                       'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': -1, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': True}
+                       'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': 237, 'predicate_type': 'GREATER_THAN',
+                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': test_mode}
 
     # create test data
     create_test_dirs(0, 1, 1)
@@ -199,21 +202,24 @@ def test_get_geoserver_entities():
 
     :return:
     """
-    # get a handle to the geoserver utils
-    geo_svr: GeoServerUtils = GeoServerUtils()
-
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Test get run name entities BY_AGE', 'description': 'Test get run name entities BY_AGE.',
                        'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': -1, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'not_used', 'destination': dest_dir, 'debug': True}
+                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'not_used', 'destination': dest_dir, 'debug': test_mode}
+
+    # create test data
+    create_test_dirs(0, 1, 1)
+
+    # get a handle to the geoserver utils
+    geo_svr: GeoServerUtils = GeoServerUtils()
 
     rule_utils = RuleUtils()
 
     # convert elements to their equivalent types
-    the_rule: namedtuple = rule_utils.validate_and_convert_to_rule(test_rule)
+    rule: namedtuple = rule_utils.validate_and_convert_to_rule(test_rule)
 
     # run the rule
-    entities = geo_svr.get_geoserver_entities_from_dir(the_rule)
+    entities = geo_svr.get_geoserver_entities_from_dir(rule)
 
     # interrogate the result
     assert len(entities) > 0
@@ -293,7 +299,7 @@ def test_remove_coverage_store():
     # create a test rule dict
     test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
                        'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': -1, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'not used', 'destination': dest_dir, 'debug': True}
+                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'not used', 'destination': dest_dir, 'debug': test_mode}
 
     # create a rule utility
     rule_utils = RuleUtils()

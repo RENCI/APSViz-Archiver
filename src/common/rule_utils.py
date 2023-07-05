@@ -73,10 +73,14 @@ class RuleUtils:
                 new_source = os.path.join(rule.source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', new_source, rule.destination)
+            self.logger.debug('Move file. Source: %s to destination: %s', new_source, rule.destination)
 
-            # preform the move
-            shutil.move(new_source, rule.destination)
+            # only perform the op if we aren't in debug mode
+            if not rule.debug:
+                # perform the move
+                shutil.move(new_source, rule.destination)
+            else:
+                self.logger.warning('Warning: MOVE file op not done. source %s to dest:%s', new_source, rule.destination)
 
             # set the return value
             ret_val = True
@@ -96,10 +100,11 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    def move_directory(self, rule_source: str, rule_destination: str, opt_name: str = None) -> bool:
+    def move_directory(self, rule: Rule, rule_source: str, rule_destination: str, opt_name: str = None) -> bool:
         """
         Moves the directory from source to destination
 
+        :param rule:
         :param rule_source:
         :param rule_destination:
         :param opt_name:
@@ -120,16 +125,15 @@ class RuleUtils:
                 new_destination = os.path.join(rule_destination, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', new_source, new_destination)
+            self.logger.debug('Move directory. Source: %s to destination: %s', new_source, new_destination)
 
-            # if the path exists the source directory is moved to the dest
-            # if os.path.exists(destination):
-            shutil.move(new_source, new_destination)
-            # else the source directory is renamed to the destination directory
-            # else:
-            #     os.rename(source, destination)
+            # only perform the op if we aren't in debug mode
+            if not rule.debug:
+                # move the source directory to the dest
+                shutil.move(new_source, new_destination)
+            else:
+                self.logger.warning('Warning: MOVE directory op not done. source %s to destination %s', new_source, new_destination)
 
-            # do we
             # set the return value
             ret_val = True
 
@@ -173,10 +177,14 @@ class RuleUtils:
                 new_source = os.path.join(rule.source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', new_source, rule.destination)
+            self.logger.debug('COPY file. Source %s to destination %s', new_source, rule.destination)
 
-            # perform the file copy operation
-            shutil.copy(new_source, rule.destination)
+            # only perform the op if we aren't in debug mode
+            if not rule.debug:
+                # perform the file copy operation
+                shutil.copy(new_source, rule.destination)
+            else:
+                self.logger.warning('Warning: COPY file op not done. Source %s to destination %s', new_source, rule.destination)
 
             # set the return value
             ret_val = True
@@ -189,10 +197,11 @@ class RuleUtils:
         # return to the caller
         return ret_val
 
-    def copy_directory(self, rule_source: str, rule_destination: str, opt_name: str = None) -> bool:
+    def copy_directory(self, rule: Rule, rule_source: str, rule_destination: str, opt_name: str = None) -> bool:
         """
         copies a directory from source to destination
 
+        :param rule:
         :param rule_source:
         :param rule_destination:
         :param opt_name:
@@ -213,10 +222,14 @@ class RuleUtils:
                 new_destination = os.path.join(rule_destination, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s, destination: %s', new_source, new_destination)
+            self.logger.debug('Copy directory. Source %s to destination %s', new_source, new_destination)
 
-            # copy the directory
-            shutil.copytree(new_source, new_destination, dirs_exist_ok=True)
+            # only perform the op if we aren't in debug mode
+            if not rule.debug:
+                # copy the directory
+                shutil.copytree(new_source, new_destination, dirs_exist_ok=True)
+            else:
+                self.logger.warning('Warning: COPY directory op not done. Source %s to destination %s', new_source, new_destination)
 
             # set the return value
             ret_val = True
@@ -251,24 +264,29 @@ class RuleUtils:
                 new_source = os.path.join(rule.source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s', new_source)
+            self.logger.debug('Remove file. Source %s', new_source)
 
-            # perform the file operation
-            os.remove(new_source)
+            # only perform the op if we aren't in debug mode
+            if not rule.debug:
+                # perform the file operation
+                os.remove(new_source)
+            else:
+                self.logger.warning('Warning: REMOVE file op not done. Source %s', new_source)
 
             # set the return value
             ret_val = True
 
         except Exception:
-            self.logger.exception('Error: General exception detected during a directory remove.')
+            self.logger.exception('Error: General exception detected during a directory removal.')
 
         # return to the caller
         return ret_val
 
-    def remove_directory(self, rule_source: str, opt_name: str = None) -> bool:
+    def remove_directory(self, rule: Rule, rule_source: str, opt_name: str = None) -> bool:
         """
         remove a directory
 
+        :param rule:
         :param rule_source:
         :param opt_name:
         :return:
@@ -285,10 +303,14 @@ class RuleUtils:
                 new_source = os.path.join(rule_source, opt_name)
 
             # log the targets
-            self.logger.debug('Source: %s', new_source)
+            self.logger.debug('Remove directory. Source %s', new_source)
 
-            # perform the directory removal operation
-            shutil.rmtree(new_source)
+            # only perform the op if we aren't in debug mode
+            if not rule.debug:
+                # perform the directory removal operation
+                shutil.rmtree(new_source)
+            else:
+                self.logger.warning('Warning: REMOVE directory op not done. Source %s', new_source)
 
             # set the return value
             ret_val = True
@@ -432,8 +454,11 @@ class RuleUtils:
             # if things are ok so far
             if success:
                 # convert values that are enum types
-                rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']] \
-                    if rule['query_criteria_type'] is not None else QueryCriteriaType.NONE
+                if rule['query_criteria_type'] is not None:
+                    rule['query_criteria_type'] = QueryCriteriaType[rule['query_criteria_type']]
+                else:
+                    rule['query_criteria_type'] = QueryCriteriaType.NONE
+
                 rule['query_data_type'] = QueryDataType[rule['query_data_type']] if rule['query_data_type'] is not None else QueryDataType.NONE
                 rule['predicate_type'] = PredicateType[rule['predicate_type']] if rule['predicate_type'] is not None else PredicateType.NONE
                 rule['action_type'] = ActionType[rule['action_type']] if rule['action_type'] is not None else ActionType.NONE
