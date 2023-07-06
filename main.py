@@ -13,7 +13,7 @@
 import sys
 import argparse
 from src.archiver.archiver import APSVizArchiver
-from src.test.test_geoserver_ops import create_test_dirs
+# from src.test.test_geoserver_ops import create_test_dirs
 
 
 def run_rule_file(rule_file: str) -> bool:
@@ -28,8 +28,8 @@ def run_rule_file(rule_file: str) -> bool:
     archiver = APSVizArchiver(rule_file)
 
     # TODO: if this is a debug geoserver run add some directory data
-    if archiver.debug and rule_file.find('geoserver') > -1:
-        create_test_dirs(0, 1, 1)
+    # if archiver.debug and rule_file.find('geoserver') > -1:
+    #     create_test_dirs(0, 1, 1)
 
     # initiate the archiver. return value of True indicates success
     retval: bool = archiver.run()

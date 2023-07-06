@@ -120,6 +120,8 @@ class GeoServerUtils:
 
             # for each entity
             for instance_id in instance_ids:
+                self.logger.info('Geoserver ops operating on run %s.', instance_id)
+
                 # for each operation to perform
                 for operation in operations:
                     self.logger.debug('Running %s on %s', operation.__name__, instance_id)
@@ -127,8 +129,8 @@ class GeoServerUtils:
                     # step 1: remove the obs/mod records from the adcirc_obs DB.
                     # step 2: remove the image.* records from the run properties DB.
                     # step 3. remove the catalog member records from the apsviz DB.
-                    # step 4. copy, move or remove the geoserver files from the data directory.
-                    # step 5. copy, move or remove the obs/mod files from the file server.
+                    # step 4. copy, move or remove the files from the geoserver data directory.
+                    # step 5. copy, move or remove the files from the obs/mod file directory.
                     if operation(rule, instance_id):
                         # handle the run stats
                         stats[rule_action_type_name] += 1
@@ -341,22 +343,15 @@ class GeoServerUtils:
                 # get the full instance id
                 full_instance_id: str = Path(entity).parts[-1]
 
-                # get the
+                # get the base part of the instance id
                 instance_id: str = full_instance_id.split('_')[0]
 
-                # if we aren't in debug mode do the check
-                if not rule.debug:
-                    # is this a tropical (hurricane) run
-                    if not self.db_info.is_tropical_run(instance_id):
-                        # add this entity to the list of instances to process
-                        ret_val.add(instance_id)
-                    else:
-                        self.logger.debug('Warning: %s was detected to be a tropical run. No processing will occur on this item.', instance_id)
+                # is this a tropical run
+                if self.db_info.is_tropical_run(instance_id):
+                    self.logger.info('Warning: %s was detected to be a tropical run. No processing will occur on this item.', instance_id)
                 else:
                     # add this entity to the list of instances to process
                     ret_val.add(instance_id)
-
-                    self.logger.warning('Warning: Debug mode made %s a valid entity.', full_instance_id)
 
         # return to the caller
         return ret_val
@@ -372,8 +367,11 @@ class GeoServerUtils:
         # init the success flag
         success: bool = True
 
-        # save the obs/mod path to the run
+        # get the obs/mod directory path
         obs_mod_dir = os.path.join(self.fileserver_obs_path, instance_id)
+
+        # get the geo server directory path
+        geo_svr_dir = os.path.join(self.full_geoserver_data_path, f"{instance_id}*")
 
         # execute the call if not in debug mode
         if not rule.debug:
@@ -383,10 +381,12 @@ class GeoServerUtils:
                 self.logger.error('OBS/MOD (%s) directory not found.', obs_mod_dir)
             else:
                 # get a listing of the dirs associated to this instance id
-                entities = glob.glob(self.full_geoserver_data_path + f"\\{instance_id}*")
+                entities = glob.glob(geo_svr_dir)
 
                 # if the directory wasn't found
                 if len(entities) == 0:
+                    self.logger.debug('No directory entities found in %s', geo_svr_dir)
+
                     # set the error flag
                     success = False
                 else:
@@ -413,6 +413,8 @@ class GeoServerUtils:
                         # process the obs/mod directory
                         success = success and self.rule_utils.move_directory(rule, obs_mod_dir, new_dest)
                     elif rule.action_type == ActionType.GEOSERVER_REMOVE:
+                        self.logger.debug('Executing perform_dir_ops( %s )', instance_id)
+
                         # process the geoserver directories
                         for entity in entities:
                             success = success and self.rule_utils.remove_directory(rule, entity)
@@ -422,10 +424,9 @@ class GeoServerUtils:
 
                 # check the return
                 if not success:
-                    self.logger.error('General error performing the directory operation for: %s.', instance_id)
+                    self.logger.error('General error: perform_dir_ops( %s ) with %s on %s and %s', instance_id, rule.action_type, obs_mod_dir, geo_svr_dir)
         else:
-            self.logger.debug('Debug mode on. Would have executed: perform_dir_ops( %s ) with %s on %s', instance_id,
-                              rule.action_type, obs_mod_dir)
+            self.logger.debug('Debug mode on. Would have executed: perform_dir_ops( %s ) with %s on %s and %s', instance_id, rule.action_type, obs_mod_dir, geo_svr_dir)
 
         # return to the caller
         return success
@@ -443,6 +444,8 @@ class GeoServerUtils:
 
         # only remove operations are supported
         if rule.action_type == ActionType.GEOSERVER_REMOVE:
+            self.logger.debug('Executing perform_asgs_dashboard_db_ops( %s )', instance_id)
+
             # execute the call if not in debug mode
             if not rule.debug:
                 # remove the records
@@ -471,20 +474,27 @@ class GeoServerUtils:
         # init the success flag
         success: bool = True
 
-        # only remove operations are supported
-        if rule.action_type == ActionType.GEOSERVER_REMOVE:
-            # if we are not in debug mode
-            if not rule.debug:
-                # remove the records
-                success = self.db_info.remove_catalog_db_records(instance_id)
+        # check the instance id
+        if instance_id and len(instance_id) > 5:
+            # only remove operations are supported
+            if rule.action_type == ActionType.GEOSERVER_REMOVE:
+                self.logger.debug('Executing perform_catalog_db_ops( %s )', instance_id)
+
+                # if we are not in debug mode
+                if not rule.debug:
+                    # remove the records
+                    success = self.db_info.remove_catalog_db_records(instance_id + '%')
+                else:
+                    self.logger.debug('Debug mode on. Would have executed perform_catalog_db_ops( %s )', instance_id)
             else:
-                self.logger.debug('Debug mode on. Would have executed perform_catalog_db_ops( %s )', instance_id)
+                # log the error
+                self.logger.warning('Warning - perform_catalog_db_ops(): Only remove operations are supported in perform_catalog_db_ops()')
+
+                # set the failure flag
+                success = False
         else:
             # log the error
-            self.logger.warning('Warning: Only remove operations are supported in perform_catalog_db_ops()')
-
-            # set the failure flag
-            success = False
+            self.logger.error('Error - perform_catalog_db_ops(): Invalid instance ID: %s', instance_id)
 
         # return the json to the caller
         return success
@@ -506,6 +516,8 @@ class GeoServerUtils:
 
         # only remove operations are supported
         if rule.action_type == ActionType.GEOSERVER_REMOVE:
+            self.logger.debug('Executing perform_geoserver_store_ops( %s )', instance_id)
+
             try:
                 # build the URL to the service. we want a recursive delete of everything here
                 url = f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/{store_type.lower()}/{instance_id}?recurse=true'
@@ -557,6 +569,8 @@ class GeoServerUtils:
 
         # only remove operations are supported
         if rule.action_type == ActionType.GEOSERVER_REMOVE:
+            self.logger.debug('Executing perform_obs_mod_db_ops( %s )', instance_id)
+
             # execute the call if not in debug mode
             if not rule.debug:
                 # remove the records

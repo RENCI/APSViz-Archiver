@@ -401,8 +401,9 @@ class RuleUtils:
         else:
             self.logger.error("Error: Unspecified predicate type.")
 
-        self.logger.info("%s - Source: %s, destination: %s, current age: %s, target age: %s, predicate: %s", 'Success' if ret_val else 'Failed.',
-                         rule.source, rule.destination, current_age, target_age, rule.predicate_type)
+        if ret_val:
+            self.logger.debug("%s - Source: %s, destination: %s, current age: %s, target age: %s, predicate: %s", 'Success' if ret_val else 'Failed.',
+                              rule.source, rule.destination, current_age, target_age, rule.predicate_type)
 
         # return to the caller
         return ret_val

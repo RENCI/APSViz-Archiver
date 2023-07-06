@@ -12,17 +12,27 @@ FROM python:3.11.4-slim
 
 # update the image base
 RUN apt-get update && apt-get -y upgrade
+
 # RUN apt-get install -y procps
+RUN apt -y install nano
 
 # clear the apt cache
 RUN apt-get clean
 
-# create/switch to a non-root user
+# get some credit
+LABEL maintainer="powen@renci.org"
+
+# get the build argument that has the version
+ARG APP_VERSION=$(APP_VERSION)
+
+# now add the version arg value into a ENV param
+ENV APP_VERSION=$APP_VERSION
+
+# add user nru and switch to it
 RUN useradd --create-home -u 1000 nru
-USER nru
 
 # set up requirements
-WORKDIR /repo/APSVIZ-Archiver
+WORKDIR /home/nru/APSVIZ-Archiver
 
 # install required python packages
 ADD requirements.txt .
@@ -30,7 +40,14 @@ RUN pip install -r requirements.txt
 
 # Copy in the rest of the code
 COPY main.py main.py
-COPY src src
+COPY src/archiver src/archiver
+COPY src/common src/common
+
+# make sure everything is writable
+RUN chmod -R 777 /home/nru/APSVIZ-Archiver
+
+# switch to the non-root user
+USER nru
 
 # set the python path for source
-ENV PYTHONPATH="/repo/APSVIZ-Archiver"
+ENV PYTHONPATH="/home/nru/APSVIZ-Archiver"

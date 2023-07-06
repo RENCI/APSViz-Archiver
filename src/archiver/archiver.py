@@ -47,9 +47,6 @@ class APSVizArchiver:
         else:
             self.debug = True
 
-        # grab a reference to the general utils class
-        self.utils = GeneralUtils(self.logger)
-
         # grab a reference to the GeoServer utils class
         self.geo_utils = GeoServerUtils(self.logger)
 
@@ -99,7 +96,7 @@ class APSVizArchiver:
                 start_msg = f'APSViz Archiver start. Name: {rule_def_name}, Version: {rule_def_version}'
 
                 # send/log the start message
-                self.utils.send_slack_msg(start_msg, 'slack_status_channel', self.debug)
+                self.general_utils.send_slack_msg(start_msg, 'slack_status_channel', self.debug)
 
                 # process the rule set
                 for rule_set in rule_defs['rule_sets']:
@@ -126,7 +123,7 @@ class APSVizArchiver:
                         self.logger.info("APSVix-Archiver Rule set %s complete. Run %s", rule_set['rule_set_name'], status_msg)
 
                     # send out a slack of the details
-                    self.utils.send_slack_msg(final_msg, 'slack_status_channel', self.debug)
+                    self.general_utils.send_slack_msg(final_msg, 'slack_status_channel', self.debug)
 
                 self.logger.info('<---------- Run complete: %s ---------->\n', infile)
         except Exception:
