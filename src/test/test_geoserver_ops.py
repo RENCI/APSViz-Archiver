@@ -27,6 +27,10 @@ geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE')
 # get the working directory name
 input_path = os.path.dirname(__file__)
 
+# make the dir if it doesn't exist
+if input_path and not os.path.exists(input_path):
+    os.makedirs(input_path)
+
 # get a test directory for the geoserver files
 geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH')
 
