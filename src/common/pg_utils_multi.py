@@ -149,8 +149,6 @@ class PGUtilsMultiConnect:
 
                 # try to get a connection if the check failed
                 if not good_conn:
-                    self.logger.debug('conn_str: %s', db_info.conn_str)
-
                     # try to connect to the DB
                     conn = psycopg2.connect(db_info.conn_str)
 
