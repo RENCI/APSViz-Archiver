@@ -19,7 +19,7 @@ from src.common.rule_enums import DataType
 
 # define the directory for the tests and data
 input_path = os.path.dirname(__file__)
-output_path = os.getenv('TESTDATA_PATH', os.path.dirname(__file__))
+output_path = os.getenv('TESTDATA_PATH', os.path.dirname(__file__) + '_out')
 
 # set the global test mode
 test_mode: bool = False

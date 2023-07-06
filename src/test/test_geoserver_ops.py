@@ -32,7 +32,7 @@ if input_path and not os.path.exists(input_path):
     os.makedirs(input_path)
 
 # get a test directory for the geoserver files
-geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH', 'pytest-ge0-dir')
+geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH', 'pytest_geoserver_data')
 
 assert input_path
 assert geoserver_proj_path
@@ -44,7 +44,7 @@ base_path = os.path.join(input_path, geoserver_proj_path)
 os.environ['GEOSERVER_PROJ_PATH'] = base_path
 
 # get a test directory for obs data files
-obs_proj_path: str = os.environ.get('FILESERVER_OBS_PATH')
+obs_proj_path: str = os.environ.get('FILESERVER_OBS_PATH', 'obsmod_data')
 
 # get the location of the obs mod data
 obs_proj_dir = os.path.join(base_path, obs_proj_path)
