@@ -392,7 +392,7 @@ class GeoServerUtils:
                 else:
                     # do the directory operation based on the rule action type
                     if rule.action_type == ActionType.GEOSERVER_COPY:
-                        # TODO: use the target dir as specified in the rule.
+                        # eventually use the target dir as specified in the rule.
                         # specifically, a directory specifying the /<instance id>/<data type> will be the final target
                         new_dest: str = os.path.join(rule.destination, instance_id)
 
@@ -403,7 +403,7 @@ class GeoServerUtils:
                         # process the obs/mod directory
                         success = success and self.rule_utils.copy_directory(rule, obs_mod_dir, new_dest)
                     elif rule.action_type == ActionType.GEOSERVER_MOVE:
-                        # TODO: use real target dir here too?
+                        # eventually use real target dir here too?
                         new_dest: str = ''
 
                         # process the geoserver directories
@@ -424,9 +424,11 @@ class GeoServerUtils:
 
                 # check the return
                 if not success:
-                    self.logger.error('General error: perform_dir_ops( %s ) with %s on %s and %s', instance_id, rule.action_type, obs_mod_dir, geo_svr_dir)
+                    self.logger.error('General error: perform_dir_ops( %s ) with %s on %s and %s', instance_id, rule.action_type, obs_mod_dir,
+                                      geo_svr_dir)
         else:
-            self.logger.debug('Debug mode on. Would have executed: perform_dir_ops( %s ) with %s on %s and %s', instance_id, rule.action_type, obs_mod_dir, geo_svr_dir)
+            self.logger.debug('Debug mode on. Would have executed: perform_dir_ops( %s ) with %s on %s and %s', instance_id, rule.action_type,
+                              obs_mod_dir, geo_svr_dir)
 
         # return to the caller
         return success
