@@ -32,7 +32,10 @@ if input_path and not os.path.exists(input_path):
     os.makedirs(input_path)
 
 # get a test directory for the geoserver files
-geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH')
+geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH', 'pytest-ge0-dir')
+
+assert input_path
+assert geoserver_proj_path
 
 # get the base path of the test data
 base_path = os.path.join(input_path, geoserver_proj_path)
