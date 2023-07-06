@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Renaissance Computing Institute. All rights reserved.
+# SPDX-FileCopyrightText: 2023 Renaissance Computing Institute. All rights reserved.
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-License-Identifier: LicenseRef-RENCI
@@ -7,11 +8,10 @@
 # This Dockerfile is used to build the APSVIZ-Archiver image
 
 # leverage the renci python base image
-FROM python:3.11.3-slim
+FROM python:3.11.4-slim
 
 # update the image base
 RUN apt-get update && apt-get -y upgrade
-# RUN apt-get install -y procps
 
 # clear the apt cache
 RUN apt-get clean
@@ -27,8 +27,8 @@ RUN pip install -r requirements.txt
 COPY main.py main.py
 COPY src src
 COPY .pylintrc .pylintrc
-#COPY ./test/*.py test/
-#COPY ./test/test_files test/test_files/
+COPY ./test/*.py test/
+COPY ./test/test_files test/test_files/
 
 #ENV LOG_PATH /data/logs
 #ENV TESTDATA_PATH /data/tmp
