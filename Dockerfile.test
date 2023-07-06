@@ -32,7 +32,7 @@ COPY .pylintrc .pylintrc
 #ENV TESTDATA_PATH /data/tmp
 ENV PYTHONPATH="/repo/APSVIZ-Archiver:$PYTHONPATH"
 
-WORKDIR /repo/APSVIZ-Archiver/src/test
+WORKDIR /repo/APSVIZ-Archiver
 
 # start the tests
 # CMD pytest
