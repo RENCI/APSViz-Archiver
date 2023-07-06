@@ -29,7 +29,7 @@ jobs:
 
       # build the image
       - name: Build docker image
-        run: docker build -t archiver-testing -f Dockerfile.test .
+        run: docker build -t archiver-pylint -f Dockerfile .
 
       # run pylint
       - name: Run pylint and get the output
