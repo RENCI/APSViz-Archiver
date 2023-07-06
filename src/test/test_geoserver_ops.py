@@ -14,6 +14,8 @@
 import os
 from collections import namedtuple
 
+import pytest
+
 from src.test.test_utils import run_rule
 from src.common.geoserver_utils import GeoServerUtils
 from src.common.rule_utils import RuleUtils
@@ -22,7 +24,7 @@ from src.common.rule_utils import RuleUtils
 instance_id: str = 'test_store'
 
 # get the geoserver workspace name
-geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE')
+geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE', 'ADCIRC_2023')
 
 # get the working directory name
 input_path = os.path.dirname(__file__)
@@ -182,6 +184,7 @@ def create_test_dirs(start: int, stop: int, max_count: int):
                 os.mkdir(full_obs_path)
 
 
+@pytest.mark.skip(reason="Local test only")
 def test_geoserver_remove_rule():
     """
     tests the retrieval of geoserver entries that meet rule criteria
@@ -203,6 +206,7 @@ def test_geoserver_remove_rule():
     assert process_stats['failed'] == 0 and process_stats['removed'] > 0 and process_stats['swept'] > 0
 
 
+@pytest.mark.skip(reason="Local test only")
 def test_get_geoserver_entities():
     """
     tests the retrieval of instance ids found on the file system specified
