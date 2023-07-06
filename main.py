@@ -27,7 +27,7 @@ def run_rule_file(rule_file: str) -> bool:
     # create the archiver
     archiver = APSVizArchiver(rule_file)
 
-    # TODO: if this is a debug geoserver run add some directory data
+    # if this is a debug geoserver run add some directory data
     # if archiver.debug and rule_file.find('geoserver') > -1:
     #     create_test_dirs(0, 1, 1)
 
