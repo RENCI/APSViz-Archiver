@@ -19,8 +19,10 @@ def test_env_params():
     :return:
     """
     # get a list of the target params
-    env_params: list = ['FILESERVER_OBS_PATH', 'GEOSERVER_HOST', 'GEOSERVER_PASSWORD', 'GEOSERVER_PROJ_PATH', 'GEOSERVER_URL', 'GEOSERVER_USER', 'GEOSERVER_WORKSPACE']
+    env_params: list = ['FILESERVER_OBS_PATH', 'GEOSERVER_HOST', 'GEOSERVER_PASSWORD', 'GEOSERVER_PROJ_PATH', 'GEOSERVER_URL', 'GEOSERVER_USER',
+                        'GEOSERVER_WORKSPACE']
 
-    # for each param
+    # for each env param
     for item in env_params:
+        # a value should be there
         assert os.getenv(item)
