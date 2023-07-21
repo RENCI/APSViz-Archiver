@@ -9,10 +9,6 @@ name: Test publish a docker image to AWS ECR
 
 on: workflow_dispatch
 
-# working parameters that are specific to this script
-env:
-  REGISTRY: containers.renci.org/eds/apsviz-archiver
-
 # job definition
 jobs:
   Build-and-publish-image:
@@ -22,12 +18,20 @@ jobs:
 
     # job steps
     steps:
-      - # pull a docker image
+      # pull a docker image
       - name: pull a image to work with
+        id: pull-it
         run: docker pull containers.renci.org/eds/apsviz-settings:latest
 
-      - name: tag the image
-        run: docker tag containers.renci.org/eds/apsviz-settings:latest 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
+      - name: list images 1
+        run: docker images
+
+#      - name: tag the image
+#        id: tag-it
+#        run: docker tag containers.renci.org/eds/apsviz-settings:latest 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
+#
+#      - name: list images 2
+#        run: docker images
 
       - name: Push to ECR
         id: ecr
@@ -36,4 +40,5 @@ jobs:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
-          image: 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
+          local-image: containers.renci.org/eds/apsviz-settings:latest
+          image: apsviz-archiver:test
