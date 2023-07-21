@@ -25,14 +25,14 @@ jobs:
 
       - name: list images 1
         run: docker images
-        
-      - name: tag the image
-        id: tag-it
-        run: docker tag containers.renci.org/eds/apsviz-settings:latest 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
 
-      - name: list images 2
-        run: docker images
-        
+#      - name: tag the image
+#        id: tag-it
+#        run: docker tag containers.renci.org/eds/apsviz-settings:latest 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
+#
+#      - name: list images 2
+#        run: docker images
+
       - name: Push to ECR
         id: ecr
         uses: jwalton/gh-ecr-push@v1
@@ -40,4 +40,5 @@ jobs:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
+          local-image: containers.renci.org/eds/apsviz-settings:latest
           image: apsviz-test:test
