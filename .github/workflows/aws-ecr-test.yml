@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2022 Renaissance Computing Institute. All rights reserved.
+# SPDX-FileCopyrightText: 2023 Renaissance Computing Institute. All rights reserved.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: LicenseRef-RENCI
+# SPDX-License-Identifier: MIT
+
+name: Build and publish the docker image
+
+on: workflow_dispatch
+
+# working parameters that are specific to this script
+env:
+  REGISTRY: containers.renci.org/eds/apsviz-archiver
+
+# job definition
+jobs:
+  Build-and-publish-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    # job steps
+    steps:
+      - # pull a docker image
+      - name: pull a image to work with
+        run: docker pull containers.renci.org/eds/apsviz-settings:latest
+
+      - name: tag the image
+        run: docker tag containers.renci.org/eds/apsviz-settings:latest 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
+
+      - name: Push to ECR
+        id: ecr
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: us-east-2
+          image: 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
