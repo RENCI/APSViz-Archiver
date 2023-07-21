@@ -9,8 +9,9 @@ name: Build and publish the docker image
 
 # trigger event is publishing a release in the repo
 on:
-  release:
-    types: [published]
+  workflow_dispatch
+#  release:
+#    types: [published]
 
 # working parameters that are specific to this script
 env:
@@ -42,13 +43,27 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
-      # build and push the image. The docker v3 action automatically handles the git checkout.
-      - name: Build/Push the image to the registry
+      # build and push the image. This docker v3 action automatically handles the git checkout.
+      - name: Build/Push the image and push it to the RENCI registry
         uses: docker/build-push-action@v3
         with:
           push: true
           build-args: |
             APP_VERSION=${{ steps.get_version.outputs.VERSION }}
           tags: |
-            ${{ env.REGISTRY }}:latest
+#            ${{ env.REGISTRY }}:latest
             ${{ env.REGISTRY }}:${{ steps.get_version.outputs.VERSION }}
+
+      - name: List docker images
+        run: docker images
+
+      # push the image to AWS/ECR
+      - name: Push the built image to the AWS/ECR registry
+        id: ecr
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: us-east-2
+          local-image: ${{ env.REGISTRY }}:latest
+          image: apsviz-archiver:latest, apsviz-archiver:${{ steps.get_version.outputs.VERSION }}
