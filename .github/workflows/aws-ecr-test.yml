@@ -22,7 +22,7 @@ jobs:
 
     # job steps
     steps:
-      - # pull a docker image
+      # pull a docker image
       - name: pull a image to work with
         run: docker pull containers.renci.org/eds/apsviz-settings:latest
 
