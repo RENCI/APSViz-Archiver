@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: LicenseRef-RENCI
 # SPDX-License-Identifier: MIT
 
-name: Build and publish the docker image
+name: Test publish a docker image to AWS ECR
 
 on: workflow_dispatch
 
