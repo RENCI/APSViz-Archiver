@@ -11,10 +11,8 @@ on:
   workflow_dispatch:
     inputs:
       in_container:
-        # containers.renci.org/eds/apsviz-settings:latest
         required: true
       out_container:
-        # "732457422609.dkr.ecr.us-east-2.amazonaws.com"
         required: true
 
 # job definition
@@ -38,8 +36,8 @@ jobs:
         id: ecr
         uses: jwalton/gh-ecr-push@v1
         with:
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-east-2
-          local-image: {{ github.event.inputs.in_container }}
-          image: {{ github.event.inputs.out_container }}
+          access-key-id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          secret-access-key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          region: "us-east-2"
+          local-image: "{{ github.event.inputs.in_container }}"
+          image: "{{ github.event.inputs.out_container }}"
