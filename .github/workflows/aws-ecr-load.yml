@@ -42,4 +42,4 @@ jobs:
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
           local-image: containers.renci.org/eds/${{ github.event.inputs.in_container }}
-          image: {{ github.event.inputs.out_container }}
+          image: ${{ github.event.inputs.out_container }}
