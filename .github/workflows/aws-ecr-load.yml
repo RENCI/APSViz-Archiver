@@ -27,7 +27,7 @@ jobs:
       # pull a docker image
       - name: pull a image to work with
         id: pull-it
-        run: docker pull ${{ github.event.inputs.in_container }}
+        run: docker pull containers.renci.org/eds/${{ github.event.inputs.in_container }}
 
       - name: list images 1
         run: docker images
@@ -39,5 +39,5 @@ jobs:
           access-key-id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
           secret-access-key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           region: "us-east-2"
-          local-image: "{{ github.event.inputs.in_container }}"
+          local-image: containers.renci.org/eds/"{{ github.event.inputs.in_container }}"
           image: "{{ github.event.inputs.out_container }}"
