@@ -5,14 +5,16 @@
 # SPDX-License-Identifier: LicenseRef-RENCI
 # SPDX-License-Identifier: MIT
 
-name: Publish an input docker image to the AWS ECR
+name: Publish an input docker image to the AWS ECR with the version specified
 
 on:
   workflow_dispatch:
     inputs:
       in_container:
+        description: "this is the full path to the input <url>/image:version"
         required: true
       version:
+        description: "in addition to latest, this is the image version that will be used in AWS/ECR"
         required: true
 
 # job definition
