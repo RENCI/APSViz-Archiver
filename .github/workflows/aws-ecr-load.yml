@@ -5,9 +5,17 @@
 # SPDX-License-Identifier: LicenseRef-RENCI
 # SPDX-License-Identifier: MIT
 
-name: Test publish a docker image to AWS ECR
+name: Publish an input docker image to the AWS ECR
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      in_container:
+        # containers.renci.org/eds/apsviz-settings:latest
+        required: true
+      out_container:
+        # "732457422609.dkr.ecr.us-east-2.amazonaws.com"
+        required: true
 
 # job definition
 jobs:
@@ -21,17 +29,10 @@ jobs:
       # pull a docker image
       - name: pull a image to work with
         id: pull-it
-        run: docker pull containers.renci.org/eds/apsviz-settings:latest
+        run: docker pull ${{ github.event.inputs.in_container }}
 
       - name: list images 1
         run: docker images
-
-#      - name: tag the image
-#        id: tag-it
-#        run: docker tag containers.renci.org/eds/apsviz-settings:latest 732457422609.dkr.ecr.us-east-2.amazonaws.com/apsviz-test:test
-#
-#      - name: list images 2
-#        run: docker images
 
       - name: Push to ECR
         id: ecr
@@ -40,5 +41,5 @@ jobs:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
-          local-image: containers.renci.org/eds/apsviz-settings:latest
-          image: apsviz-archiver:test
+          local-image: {{ github.event.inputs.in_container }}
+          image: {{ github.event.inputs.out_container }}
