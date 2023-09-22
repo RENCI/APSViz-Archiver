@@ -17,9 +17,9 @@ Archives file created by the various APSViz applications and processes.
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 [![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://www.renci.org/)
 #### Components and versions...
-[![Python](https://img.shields.io/badge/Python-3.11.4-orange)](https://github.com/python/cpython)
+[![Python](https://img.shields.io/badge/Python-3.11.5-orange)](https://github.com/python/cpython)
 [![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.5-yellow)](https://github.com/PyCQA/pylint)
-[![Pytest](https://img.shields.io/badge/Pytest-%207.4.1-blue)](https://github.com/pytest-dev/pytest)
+[![Pytest](https://img.shields.io/badge/Pytest-%207.4.2-blue)](https://github.com/pytest-dev/pytest)
 #### Build status...
 [![Pylint and Pytest](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-pytest.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-pytest.yml)
 [![Build and push the Docker image](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml)
