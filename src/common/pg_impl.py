@@ -120,7 +120,7 @@ class PGImplementation(PGUtilsMultiConnect):
 
     def remove_run_props_db_image_records(self, run_name: str):
         """
-        Removes the asgs dashboard image run props that are associated to the instance id from the DB.
+        Removes the apsviz image run props that are associated to the instance id from the DB.
 
         """
         # init the return value
@@ -134,7 +134,7 @@ class PGImplementation(PGUtilsMultiConnect):
             sql = f"SELECT remove_image_run_props('{run_name}')"
 
             # execute the sql
-            sql_ret = self.exec_sql('asgs', sql)
+            sql_ret = self.exec_sql('apsviz', sql)
 
             # check the result
             if sql_ret < 0:

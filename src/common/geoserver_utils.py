@@ -52,7 +52,7 @@ class GeoServerUtils:
             self.logger = LoggingUtil.init_logging("APSVIZ.Archiver.GeoServerUtils", level=log_level, line_format='medium', log_file_path=log_path)
 
         # specify the DBs to gain connectivity to
-        db_names: tuple = ('asgs', 'apsviz', 'adcirc_obs')
+        db_names: tuple = ('apsviz', 'adcirc_obs')
 
         # create a DB connection object
         self.db_info = PGImplementation(db_names, self.logger)
@@ -87,12 +87,12 @@ class GeoServerUtils:
             The GEOSERVER_REMOVE action removes data file directories as well as DB and GeoServer records.
 
         The base data directory is defined in the EDS secrets GEOSERVER_PROJ_PATH and GEOSERVER_WORKSPACE
-        and is usually located at "/opt/geoserver/data_dir/data/ADCIRC_2023/<data directories>". The names of the directories are used to as
+        and is usually located at "/opt/geoserver/data_dir/data/<catalog>>/<data directories>". The names of the directories are used to as
         instance ids which can be used to target DB and GeoServer records.
 
         Here is the full set of operations that can be performed on each instance id:
             1. remove the obs/mod records from the stations table in the adcirc_obs DB.
-            2. remove the image.* records from the run properties table in the asgs_dashboard DB.
+            2. remove the image.* records from the run properties table in the apsviz DB.
             3. remove the catalog member records from the apsviz DB.
             4. copy, move or remove the geoserver files from the data directory (eg. <base dir>/4362-2023030112-gfsforecast*).
             5. copy, move or remove the obs/mod files from the file server (/fileserver/obs_png/4362-2023030112-gfsforecast).
@@ -117,7 +117,7 @@ class GeoServerUtils:
 
         try:
             # create a list of functions to call to perform DB and directory operations
-            operations: list = [self.perform_obs_mod_db_ops, self.perform_asgs_dashboard_db_ops, self.perform_catalog_db_ops, self.perform_dir_ops]
+            operations: list = [self.perform_obs_mod_db_ops, self.perform_apsviz_db_ops, self.perform_catalog_db_ops, self.perform_dir_ops]
 
             # for each entity
             for instance_id in instance_ids:
@@ -174,8 +174,7 @@ class GeoServerUtils:
 
     def create_geoserver_store(self, store_type: str, instance_id: str) -> bool:
         """
-        Adds a GeoServer store for the store type and instance id passed
-
+        Adds a GeoServer store for the store type and instance id pas
         :param store_type:
         :param instance_id:
         :return:
@@ -190,15 +189,17 @@ class GeoServerUtils:
             # # create the config body
             # store_config = json.loads('{"coverageStore": {"name": "' + coverage_store_name + '", "workspace": "' + self.geoserver_workspace + '"}}')
             # store_config: dict = {
-            #     'coverageStore': {'name': instance_id, 'workspace': self.geoserver_workspace, 'url': 'file:data/ADCIRC_2023/test_coverage_store',
+            #     'coverageStore': {'name': instance_id, 'workspace': self.geoserver_workspace, 'url': 'file:data/{geoserver_workspace}/test_coverage_store',
             #                       'type': 'imagemosaic'}}
+
+            geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE', 'ADCIRC_2024')
 
             # build the URL to the service
             url = f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/{store_type.lower()}'
 
             # create the config request
             store_config: dict = {
-                store_type[:-1]: {'name': instance_id, 'workspace': self.geoserver_workspace, 'url': f'file:data/ADCIRC_2023/{instance_id}',
+                store_type[:-1]: {'name': instance_id, 'workspace': self.geoserver_workspace, 'url': f'file:data/{geoserver_workspace}/{instance_id}',
                                   'type': 'imagemosaic'}}
 
             # execute the post
@@ -434,9 +435,9 @@ class GeoServerUtils:
         # return to the caller
         return success
 
-    def perform_asgs_dashboard_db_ops(self, rule: RuleUtils.Rule, instance_id) -> (bool, object):
+    def perform_apsviz_db_ops(self, rule: RuleUtils.Rule, instance_id) -> (bool, object):
         """
-        removes the asgs dashboard DB image.* run prop records associated to the run name
+        removes the apsviz DB image.* run prop records associated to the run name
 
         :param rule:
         :param instance_id:
@@ -447,17 +448,17 @@ class GeoServerUtils:
 
         # only remove operations are supported
         if rule.action_type == ActionType.GEOSERVER_REMOVE:
-            self.logger.debug('Executing perform_asgs_dashboard_db_ops( %s )', instance_id)
+            self.logger.debug('Executing perform_apsviz_db_ops( %s )', instance_id)
 
             # execute the call if not in debug mode
             if not rule.debug:
                 # remove the records
                 success = self.db_info.remove_run_props_db_image_records(instance_id)
             else:
-                self.logger.debug('Debug mode on. Would have executed perform_asgs_dashboard_db_ops( %s )', instance_id)
+                self.logger.debug('Debug mode on. Would have executed perform_apsviz_db_ops( %s )', instance_id)
         else:
             # log the error
-            self.logger.warning('Warning: Only remove operations are supported in perform_asgs_dashboard_db_ops()')
+            self.logger.warning('Warning: Only remove operations are supported in perform_apsviz_db_ops()')
 
             # set the failure flag
             success = False

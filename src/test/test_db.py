@@ -23,7 +23,7 @@ def test_db_connection_creation():
     :return:
     """
     # specify the DBs to gain connectivity to
-    db_names: tuple = ('asgs', 'apsviz', 'adcirc_obs')
+    db_names: tuple = ('apsviz', 'adcirc_obs')
 
     # create a DB connection object
     db_info = PGImplementation(db_names)

@@ -22,7 +22,6 @@ class SyncSystemType(int, Enum):
     """
     APSVIZ_DB = 1
     GEOSERVER = 2
-    ASGS_DB = 3
     OBS_MOD_DB = 4
     NONE = 99
 
