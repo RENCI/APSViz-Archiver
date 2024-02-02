@@ -25,7 +25,7 @@ from src.common.rule_utils import RuleUtils
 instance_id: str = 'test_store'
 
 # get the geoserver workspace name
-geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE', 'ADCIRC_2023')
+geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE', 'ADCIRC_2024')
 
 # get the working directory name
 input_path = os.path.dirname(__file__)
