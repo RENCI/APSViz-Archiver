@@ -205,7 +205,7 @@ class GeoServerUtils:
             # execute the post
             ret_val = requests.post(url, auth=(self.username, self.password), json=store_config, timeout=10)
 
-            # was the call unsuccessful. 201 is returned on success for ths one
+            # was the call unsuccessful? 201 is returned for success for this one
             if ret_val.status_code != 201:
                 # log the error
                 self.logger.error('Error %s when creating %s: "%s".', ret_val.status_code, store_type, instance_id)
