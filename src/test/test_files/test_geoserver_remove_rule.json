@@ -12,7 +12,7 @@
           "description": "Remove geoserver entries BY_AGE.",
           "query_criteria_type": "BY_AGE",
           "query_data_type": "INTEGER",
-          "query_data_value": -1,
+          "query_data_value": 14,
           "predicate_type": "GREATER_THAN",
           "action_type": "GEOSERVER_REMOVE",
           "data_type": "NONE",
