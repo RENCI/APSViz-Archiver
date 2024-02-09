@@ -22,6 +22,7 @@ from src.common.pg_impl import PGImplementation
 from src.common.rule_utils import RuleUtils
 from src.common.rule_enums import ActionType
 from src.common.general_utils import GeneralUtils
+from src.common.tds_utils import TDSUtils
 
 
 class GeoServerUtils:
@@ -40,7 +41,7 @@ class GeoServerUtils:
         Initializes this class
 
         """
-        # if a reference to a logger passed in use it
+        # if this is a reference to a logger passed in use it
         if _logger is not None:
             # get a handle to a logger
             self.logger = _logger
@@ -74,12 +75,15 @@ class GeoServerUtils:
         # create the general utilities class
         self.general_utils = GeneralUtils(self.logger)
 
+        # create a TDS utilities class
+        self.tds_utils = TDSUtils()
+
         # init some storage for the run names
         self.run_names: set = set()
 
     def process_geoserver_rule(self, stats: dict, rule: RuleUtils.Rule) -> (bool, dict):
         """
-        Does the action specified (copy, move, remove) for file system, DB and geoserver data for a run.
+        Does the action specify (copy, move, remove) for the file system, DB and geoserver data for a run.
 
         Note that:
             The GEOSERVER_COPY action only copies data file directories to another location. DB and GeoServer records are not touched.
@@ -91,10 +95,10 @@ class GeoServerUtils:
         instance ids which can be used to target DB and GeoServer records.
 
         Here is the full set of operations that can be performed on each instance id:
-            1. remove the obs/mod records from the stations table in the adcirc_obs DB.
+            1. remove the obs/mod records from the station table in the adcirc_obs DB.
             2. remove the image.* records from the run properties table in the apsviz DB.
             3. remove the catalog member records from the apsviz DB.
-            4. copy, move or remove the geoserver files from the data directory (eg. <base dir>/4362-2023030112-gfsforecast*).
+            4. copy, move or remove the geoserver files from the data directory (e.g. <base dir>/4362-2023030112-gfsforecast*).
             5. copy, move or remove the obs/mod files from the file server (/fileserver/obs_png/4362-2023030112-gfsforecast).
             6: remove the coverage/data stores for each product in the geoserver
 
@@ -108,16 +112,26 @@ class GeoServerUtils:
             rule_action_type_name = 'copied'
         elif rule.action_type == ActionType.GEOSERVER_MOVE:
             rule_action_type_name = 'moved'
-        else:
+        elif rule.action_type == ActionType.GEOSERVER_REMOVE:
             rule_action_type_name = 'removed'
+        else:
+            # invalid action type, abort
+            success = False
+
+            # handle the run stats
+            stats['failed'] += 1
+
+            # return to the caller
+            return success, stats
 
         # get the list of directory names found on the geoserver.
-        # these are also considered to be instance ids without product type.
+        # these are also considered to be instance ids without a product type.
         instance_ids: set = self.get_geoserver_entities_from_dir(rule)
 
         try:
             # create a list of functions to call to perform DB and directory operations
-            operations: list = [self.perform_obs_mod_db_ops, self.perform_apsviz_db_ops, self.perform_catalog_db_ops, self.perform_dir_ops]
+            operations: list = [self.perform_obs_mod_db_ops, self.perform_apsviz_db_ops, self.perform_catalog_db_ops, self.perform_dir_ops,
+                                self.perform_tds_dir_ops]
 
             # for each entity
             for instance_id in instance_ids:
@@ -132,6 +146,7 @@ class GeoServerUtils:
                     # step 3. remove the catalog member records from the apsviz DB.
                     # step 4. copy, move or remove the files from the geoserver data directory.
                     # step 5. copy, move or remove the files from the obs/mod file directory.
+                    # step 6. copy, move or remove the files from the TDS file directory.
                     if operation(rule, instance_id):
                         # handle the run stats
                         stats[rule_action_type_name] += 1
@@ -146,7 +161,7 @@ class GeoServerUtils:
                     # get the filtered list of the stores by instance id. this id includes the product type
                     instance_id_products: list = self.get_geoserver_stores_like_instance_id(store_type, instance_id)
 
-                    # for each instance (+ product type) found
+                    # for each instance (+ a product type) found
                     for instance_id_product in instance_id_products:
                         # remove the product from the geoserver
                         if self.perform_geoserver_store_ops(rule, store_type, instance_id_product):
@@ -160,7 +175,7 @@ class GeoServerUtils:
                             # handle the run stats
                             stats['failed'] += 1
 
-                # if we got this far it ran to a successful completion
+                # if we got this far, it ran to a successful completion
                 stats['swept'] += 1
 
         except Exception:
@@ -189,7 +204,8 @@ class GeoServerUtils:
             # # create the config body
             # store_config = json.loads('{"coverageStore": {"name": "' + coverage_store_name + '", "workspace": "' + self.geoserver_workspace + '"}}')
             # store_config: dict = {
-            #     'coverageStore': {'name': instance_id, 'workspace': self.geoserver_workspace, 'url': 'file:data/{geoserver_workspace}/test_coverage_store',
+            #     'coverageStore': {'name': instance_id, 'workspace': self.geoserver_workspace,
+            #                       'url': 'file:data/{geoserver_workspace}/test_coverage_store',
             #                       'type': 'imagemosaic'}}
 
             geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE', 'ADCIRC_2024')
@@ -243,7 +259,7 @@ class GeoServerUtils:
             # execute the get
             result_val = requests.get(url, auth=(self.username, self.password), timeout=10)
 
-            # was the call unsuccessful
+            # was the call unsuccessful?
             if result_val.status_code != 200:
                 # log the error
                 self.logger.error('Error %s when getting coverage store "%s"', result_val.status_code, instance_id)
@@ -266,9 +282,9 @@ class GeoServerUtils:
         Get all the coverage stores inside a <store type> workspace
 
         note:
-            valid store types are coverageStores and dataStores
-            url store type is all lowercase
-            keys in the response data array are [store type][singular store type]
+            - valid store types are coverageStores and dataStores
+            - the url store type is all lowercase
+            - keys in the response data array are [store type][singular store type]
 
         :param store_type:
         :param instance_id:
@@ -284,7 +300,7 @@ class GeoServerUtils:
             # execute the get
             response: requests.Response = requests.get(url, auth=(self.username, self.password), timeout=10)
 
-            # was the call unsuccessful
+            # was the call unsuccessful?
             if response.status_code != 200:
                 # log the error
                 self.logger.error('Error %s gathering all geoserver %s stores.', response.status_code, store_type)
@@ -328,7 +344,7 @@ class GeoServerUtils:
         # init the return
         ret_val: set = set()
 
-        # get a listing of the contents of the geoserver data directory
+        # get a listing of the contents in the geoserver data directory
         entities = glob.glob(os.path.join(self.full_geoserver_data_path, '*'))
 
         # loop through the director names and validate
@@ -340,7 +356,7 @@ class GeoServerUtils:
             if not os.path.exists(entity) or not S_ISDIR(entity_details.st_mode):
                 continue
 
-            # does the entity meet criteria
+            # does the entity meet criteria?
             if self.rule_utils.meets_criteria(rule, entity_details):
                 # get the full instance id
                 full_instance_id: str = Path(entity).parts[-1]
@@ -348,7 +364,7 @@ class GeoServerUtils:
                 # get the base part of the instance id
                 instance_id: str = full_instance_id.split('_')[0]
 
-                # is this a tropical run
+                # is this a tropical run?
                 if self.db_info.is_tropical_run(instance_id):
                     self.logger.info('Warning: %s was detected to be a tropical run. No processing will occur on this item.', instance_id)
                 else:
@@ -357,6 +373,44 @@ class GeoServerUtils:
 
         # return to the caller
         return ret_val
+
+    def perform_tds_dir_ops(self, rule: RuleUtils.Rule, instance_id: str) -> bool:
+        """
+        performs the TDS directory ops
+
+        :param rule:
+        :param instance_id:
+        :return:
+        """
+        # init the success flag
+        success: bool = True
+
+        # check the instance id
+        if instance_id and len(instance_id) > 5:
+            # only remove operations are supported
+            if rule.action_type == ActionType.GEOSERVER_REMOVE:
+                self.logger.debug('Executing perform_tds_dir_ops( %s )', instance_id)
+
+                # if we are not in debug mode
+                if not rule.debug:
+                    # remove the records
+                    success = self.tds_utils.remove_dirs(instance_id)
+                else:
+                    # TODO: remove the records
+                    # success = self.tds_utils.remove_dirs(rule, instance_id)
+                    self.logger.debug('Debug mode on. Would have executed perform_tds_dir_ops( %s )', instance_id)
+            else:
+                # log the error
+                self.logger.warning('Warning - perform_tds_dir_ops(): Only remove operations are supported in perform_tds_dir_ops()')
+
+                # set the failure flag
+                success = False
+        else:
+            # log the error
+            self.logger.error('Error - perform_tds_dir_ops(): Invalid instance ID: %s', instance_id)
+
+        # return to the caller
+        return success
 
     def perform_dir_ops(self, rule: RuleUtils.Rule, instance_id: str) -> bool:
         """
@@ -394,7 +448,7 @@ class GeoServerUtils:
                 else:
                     # do the directory operation based on the rule action type
                     if rule.action_type == ActionType.GEOSERVER_COPY:
-                        # eventually use the target dir as specified in the rule.
+                        # eventually, use the target dir as specified in the rule.
                         # specifically, a directory specifying the /<instance id>/<data type> will be the final target
                         new_dest: str = os.path.join(rule.destination, instance_id)
 
@@ -523,7 +577,7 @@ class GeoServerUtils:
             self.logger.debug('Executing perform_geoserver_store_ops( %s )', instance_id)
 
             try:
-                # build the URL to the service. we want a recursive delete of everything here
+                # build the URL to the service. we want a recursive deletion of everything here
                 url = f'{self.geoserver_url}/rest/workspaces/{self.geoserver_workspace}/{store_type.lower()}/{instance_id}?recurse=true'
 
                 # execute the call if not in debug mode and is a remove operation
