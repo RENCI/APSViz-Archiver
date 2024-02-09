@@ -12,9 +12,9 @@
     Author: Phil Owen, 2/16/2023
 """
 import os
+from collections import namedtuple
 import pytest
 
-from collections import namedtuple
 from src.test.test_utils import run_rule
 from src.common.geoserver_utils import GeoServerUtils
 from src.common.rule_utils import RuleUtils
@@ -22,31 +22,21 @@ from src.common.rule_utils import RuleUtils
 # init the full coverage store name (aka instance id e.g. 4303-2023020206-namforecast_maxele63)
 instance_id: str = 'test_store'
 
-# set the global test mode
+# set the test mode
 test_mode: bool = True
 
-# declare global variables
-geoserver_workspace: str = ''
-geoserver_proj_path: str = ''
-obs_proj_dir: str = ''
-source_dir : str = ''
-dest_dir: str = ''
 
-
-def setup_dirs_and_envs():
+def setup_dirs_and_envs() -> (str, str):
     """
     prepares the environment for testing
 
     :return:
     """
-    # for all tests to use
-    global obs_proj_dir, source_dir, dest_dir, geoserver_workspace, geoserver_proj_path
-
     # get the geoserver workspace name
-    geoserver_workspace = os.environ.get('GEOSERVER_WORKSPACE', 'ADCIRC_2024')
+    geoserver_workspace: str = os.environ.get('GEOSERVER_WORKSPACE', 'ADCIRC_2024')
 
     # get the working directory name
-    input_path = os.path.dirname(__file__)
+    input_path: str = os.path.dirname(__file__)
 
     assert input_path
 
@@ -55,24 +45,24 @@ def setup_dirs_and_envs():
         os.makedirs(input_path)
 
     # get a test directory for the geoserver files
-    geoserver_proj_path = os.environ.get('GEOSERVER_PROJ_PATH', 'pytest_geoserver_data')
+    geoserver_proj_path: str = os.environ.get('GEOSERVER_PROJ_PATH', 'pytest_geoserver_data')
 
     assert geoserver_proj_path
 
     # get the base path of the test data
-    base_path = os.path.join(input_path, geoserver_proj_path)
+    base_path: str = os.path.join(input_path, geoserver_proj_path)
 
     # save the new base path
     os.environ['GEOSERVER_PROJ_PATH'] = base_path
 
     # get a test directory for obs data files
-    obs_proj_path = os.environ.get('FILESERVER_OBS_PATH', 'obsmod_data')
+    obs_proj_path: str = os.environ.get('FILESERVER_OBS_PATH', 'obsmod_data')
 
     # get the location of the obs mod data
-    obs_proj_dir = os.path.join(base_path, obs_proj_path)
+    obs_proj_directory: str = os.path.join(base_path, obs_proj_path)
 
     # save the new obs data path
-    os.environ['FILESERVER_OBS_PATH'] = obs_proj_dir
+    os.environ['FILESERVER_OBS_PATH'] = obs_proj_directory
 
     # save the TDS data path
     os.environ['TDS_BASE_PATH'] = base_path
@@ -82,29 +72,31 @@ def setup_dirs_and_envs():
     os.environ['TDS_URL'] = os.environ.get('TDS_URL', 'https://tds.renci.org/thredds/fileServer/')
 
     # source location of all test files
-    source_dir = os.path.join(base_path, geoserver_workspace)
+    source_directory: str = os.path.join(base_path, geoserver_workspace)
 
     # location of destination directory
-    dest_dir = os.path.join(base_path, 'geoserver_out')
+    dest_directory: str = os.path.join(base_path, 'geoserver_out')
 
     # check if the geoserver directory exists
-    if not os.path.exists(source_dir):
+    if not os.path.exists(source_directory):
         # create the geoserver directory
-        os.makedirs(source_dir)
+        os.makedirs(source_directory)
 
     # check if the obsmod directory exists
-    if not os.path.exists(dest_dir):
+    if not os.path.exists(dest_directory):
         # create the obs/mod directory
-        os.makedirs(dest_dir)
+        os.makedirs(dest_directory)
 
     # check if the obsmod directory exists
-    if not os.path.exists(obs_proj_dir):
+    if not os.path.exists(obs_proj_directory):
         # create the obs/mod directory
-        os.makedirs(obs_proj_dir)
+        os.makedirs(obs_proj_directory)
+
+    return source_directory, dest_directory, obs_proj_directory
 
 
 # setup for testing
-setup_dirs_and_envs()
+source_dir, dest_dir, obs_proj_dir = setup_dirs_and_envs()
 
 
 def create_geoserver_store(store_type: str) -> bool:
@@ -212,7 +204,7 @@ def create_test_dirs(start: int, stop: int, max_count: int):
                 os.mkdir(full_obs_path)
 
 
-#@pytest.mark.skip(reason="Local test only")
+@pytest.mark.skip(reason="Local test only")
 def test_geoserver_remove_rule():
     """
     tests the retrieval of geoserver entries that meet rule criteria
