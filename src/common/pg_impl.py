@@ -179,3 +179,25 @@ class PGImplementation(PGUtilsMultiConnect):
 
         # return the success flag
         return ret_val
+
+    def get_run_props(self, instance_id: int, uid: str):
+        """
+        gets the run properties for a run
+
+        :return:
+        """
+        # create the sql
+        sql: str = f"SELECT * FROM public.get_run_prop_items_json({instance_id}, '{uid}')"
+
+        # get the data
+        ret_val = self.exec_sql('apsviz', sql)
+
+        # check the result
+        if ret_val != 0:
+            # replace with the data sorted by keys
+            ret_val = {x: ret_val[0]['run_data'][x] for x in sorted(ret_val[0]['run_data'])}
+        else:
+            ret_val = -1
+
+        # return the data
+        return ret_val
