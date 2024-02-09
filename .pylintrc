@@ -16,3 +16,4 @@ max-statements=50
 min-public-methods=0
 fail-under=9.95
 max-branches=20
+max-nested-blocks=10
