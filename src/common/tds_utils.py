@@ -14,12 +14,10 @@
 import os
 import shutil
 import sys
-import pathlib
 
 from src.common.logger import LoggingUtil
 from src.common.pg_impl import PGImplementation
 from src.common.rule_utils import RuleUtils
-from src.common.rule_enums import ActionType
 from src.common.general_utils import GeneralUtils
 
 
@@ -72,11 +70,10 @@ class TDSUtils:
         else:
             self.dir_sep = '/'
 
-    def remove_dirs(self, rule: RuleUtils.Rule, instance_id: str) -> bool:
+    def remove_dirs(self, instance_id: str) -> bool:
         """
         recursively removes empty directories
 
-        :param rule:
         :param instance_id:
         :return:
         """
@@ -89,11 +86,11 @@ class TDSUtils:
         # ensure we got 3 parts. anything else is unexpected
         if len(instance_id_parts) == 3:
             # get the TDS directory
-            data_path = self.get_tds_data_path(instance_id, instance_id_parts)
+            data_path: str = self.get_tds_data_path(instance_id, instance_id_parts)
 
             try:
                 # if there is no path, this must be on a TDS server outside this namespace
-                if len(data_path):
+                if len(data_path) > 0:
                     # remove the directory specified that has the data
                     shutil.rmtree(data_path)
 
@@ -173,7 +170,7 @@ class TDSUtils:
                 property_index = 'downloadurl'
 
             # is this a path on the current namespace?
-            if len(property_index) and run_properties[property_index].find(self.tds_url) != -1:
+            if len(property_index) > 0 and run_properties[property_index].find(self.tds_url) != -1:
                 # remove the url from the path
                 ret_val = run_properties[property_index].replace(self.tds_url, '')
 
