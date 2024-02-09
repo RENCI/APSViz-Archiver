@@ -14,3 +14,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 /src/test/pytest_geoserver_data/
+/src/test/test_files/
+/src/test/tds-test/
+
