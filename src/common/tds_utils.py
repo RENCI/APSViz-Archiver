@@ -33,7 +33,7 @@ class TDSUtils:
         Initializes this class
 
         """
-        # if a reference to a logger passed in then use it
+        # if a reference to a logger is passed in, then use it
         if _logger is not None:
             # get a handle to a logger
             self.logger = _logger
