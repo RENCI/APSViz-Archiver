@@ -12,9 +12,7 @@
     Author: Phil Owen, 2/16/2023
 """
 import os
-import pytest
 
-from src.common.rule_utils import RuleUtils
 from src.common.tds_utils import TDSUtils
 
 # get the working directory name
@@ -32,9 +30,6 @@ base_path = os.path.join(input_path, tds_base_path)
 
 # save the new base dir
 os.environ['TDS_BASE_DIR'] = base_path
-
-# set the test mode
-test_mode = True
 
 
 def test_get_tds_data_path():
@@ -63,26 +58,15 @@ def test_remove_dirs():
 
     :return:
     """
-    # create a test rule dict
-    test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
-                       'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': 237, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': test_mode}
-
-    # create a rule utility
-    rule_utils = RuleUtils()
-
-    # validate and convert the dict into a rule
-    rule: RuleUtils.Rule = rule_utils.validate_and_convert_to_rule(test_rule)
-
     # get a TDS utils object
     tds: TDSUtils = TDSUtils()
 
-    # remove the directory structure. this should fail
-    ret_val: bool = tds.remove_dirs(rule, '4537-2024020600')
+    # remove the directory structure. this should fail because it is an unexpected id format
+    ret_val: bool = tds.remove_dirs('4537-2024020600')
 
     assert not ret_val
 
     # remove the directory structure
-    ret_val: bool = tds.remove_dirs(rule, '4537-2024020600-gfsforecast')
+    ret_val: bool = tds.remove_dirs('4537-2024020600-gfsforecast')
 
     assert ret_val
