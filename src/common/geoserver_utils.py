@@ -396,8 +396,6 @@ class GeoServerUtils:
                     # remove the records
                     success = self.tds_utils.remove_dirs(instance_id)
                 else:
-                    # TODO: remove the records
-                    # success = self.tds_utils.remove_dirs(rule, instance_id)
                     self.logger.debug('Debug mode on. Would have executed perform_tds_dir_ops( %s )', instance_id)
             else:
                 # log the error
