@@ -19,12 +19,12 @@ class PGImplementation(PGUtilsMultiConnect):
     """
         Class that contains DB calls for the Archiver.
 
-        Note this class inherits from the PGUtilsMultiConnect class
+        Note this class is inherited from the PGUtilsMultiConnect class
         which has all the connection and cursor handling.
     """
 
     def __init__(self, db_names: tuple, _logger=None, _auto_commit=True):
-        # if a reference to a logger passed in use it
+        # if a reference to a logger is passed in, use it
         if _logger is not None:
             # get a handle to a logger
             self.logger = _logger
