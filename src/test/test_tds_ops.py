@@ -13,6 +13,8 @@
 """
 import os
 
+import pytest
+
 from src.common.tds_utils import TDSUtils
 
 # get the working directory name
@@ -35,6 +37,7 @@ os.environ['TDS_BASE_PATH'] = base_path
 tds_url = os.environ.get('TDS_URL', '')
 
 
+@pytest.mark.skip(reason="Local test only")
 def test_get_tds_data_path():
     """
     tests the creation of the TDS data path
@@ -55,6 +58,7 @@ def test_get_tds_data_path():
     assert file_path.startswith(tds.tds_base_directory)
 
 
+@pytest.mark.skip(reason="Local test only")
 def test_remove_dirs():
     """
     tests the recursive removal of directories
