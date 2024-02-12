@@ -22,14 +22,17 @@ input_path = os.path.dirname(__file__)
 if input_path and not os.path.exists(input_path):
     os.makedirs(input_path)
 
-# get the base directory for TDS
-tds_base_path = os.environ.get('TDS_BASE_DIR', 'pytest_geoserver_data')
+# get the base directory for TDS. in this test case, it is the dir with test data
+tds_base_path = os.environ.get('TDS_BASE_PATH', 'pytest_geoserver_data')
 
 # get the base path of the test data
 base_path = os.path.join(input_path, tds_base_path)
 
 # save the new base dir
-os.environ['TDS_BASE_DIR'] = base_path
+os.environ['TDS_BASE_PATH'] = base_path
+
+# get the target TDS URL
+tds_url = os.environ.get('TDS_URL', '')
 
 
 def test_get_tds_data_path():
@@ -61,12 +64,23 @@ def test_remove_dirs():
     # get a TDS utils object
     tds: TDSUtils = TDSUtils()
 
+    # remove the directory structure in the test directory
+    ret_val: bool = tds.remove_dirs('4537-2024020600-gfsforecast')
+
+    assert ret_val
+
     # remove the directory structure. this should fail because it is an unexpected id format
     ret_val: bool = tds.remove_dirs('4537-2024020600')
 
     assert not ret_val
 
-    # remove the directory structure
-    ret_val: bool = tds.remove_dirs('4537-2024020600-gfsforecast')
+    # remove the TDS URL. this should return tue now as this will result in a no-op
+    os.environ['TDS_URL'] = ''
+
+    # get a new TDS utils object with a blank TDS URL
+    tds: TDSUtils = TDSUtils()
+
+    # remove the directory structure. this should pass because of the no-op
+    ret_val: bool = tds.remove_dirs('4537-2024020600')
 
     assert ret_val
