@@ -50,9 +50,9 @@ class TDSUtils:
         # create a DB connection object
         self.db_info = PGImplementation(db_names, self.logger)
 
-        # load environment variables
-        self.tds_url = os.environ.get('TDS_URL')  # 'https://apsviz-thredds-dev.apps.renci.org/thredds/fileServer/'
-        self.tds_base_directory = os.environ.get('TDS_BASE_PATH')  # thredds_data
+        # load environment variables of the TDS config
+        self.tds_url = os.environ.get('TDS_URL', '')
+        self.tds_base_directory = os.environ.get('TDS_BASE_PATH', '')
 
         # get a handle to the rule utils
         self.rule_utils = RuleUtils(self.logger)
@@ -80,63 +80,67 @@ class TDSUtils:
         # init the return value
         ret_val: bool = True
 
-        # split the instance id into parts
-        instance_id_parts: list = instance_id.split('-')
+        # if no TDS URL is defined, then we do not remove any files
+        if self.tds_url != '':
+            # split the instance id into parts
+            instance_id_parts: list = instance_id.split('-')
 
-        # ensure we got 3 parts. anything else is unexpected
-        if len(instance_id_parts) == 3:
-            # get the TDS directory
-            data_path: str = self.get_tds_data_path(instance_id, instance_id_parts)
+            # ensure we got 3 parts. anything else is unexpected
+            if len(instance_id_parts) == 3:
+                # get the TDS directory
+                data_path: str = self.get_tds_data_path(instance_id, instance_id_parts)
 
-            try:
-                # if there is no path, this must be on a TDS server outside this namespace
-                if len(data_path) > 0:
-                    # remove the directory specified that has the data
-                    shutil.rmtree(data_path)
+                try:
+                    # if there is no path, this must be on a TDS server outside this namespace
+                    if len(data_path) > 0:
+                        # remove the directory specified that has the data
+                        shutil.rmtree(data_path)
 
-                    # get the number of directories that must be checked when looking for empties.
-                    # we use the advisory value (YYYYMMDD) in the instance id for the directory to start checking from.
-                    # this should avoid a huge number of recursive directory checks.
-                    dir_count = (len(data_path.split(self.dir_sep)) - len(data_path.split(instance_id_parts[1])[0].split(self.dir_sep))) * -1
+                        # get the number of directories that must be checked when looking for empties.
+                        # we use the advisory value (YYYYMMDD) in the instance id for the directory to start checking from.
+                        # this should avoid a huge number of recursive directory checks.
+                        dir_count = (len(data_path.split(self.dir_sep)) - len(data_path.split(instance_id_parts[1])[0].split(self.dir_sep))) * -1
 
-                    # get the starting directory to start traversing up to
-                    interrogate_path = self.dir_sep.join(data_path.split(self.dir_sep)[0: dir_count])
+                        # get the starting directory to start traversing up to
+                        interrogate_path = self.dir_sep.join(data_path.split(self.dir_sep)[0: dir_count])
 
-                    # walk the directory path from the bottom up
-                    for current_dir, _, _ in os.walk(interrogate_path, topdown=False):
-                        self.logger.debug('Interrogating the %s directory.', current_dir)
+                        # walk the directory path from the bottom up
+                        for current_dir, _, _ in os.walk(interrogate_path, topdown=False):
+                            self.logger.debug('Interrogating the %s directory.', current_dir)
 
-                        # is anything in the subdirectory?
-                        if len(os.listdir(current_dir)) == 0:
-                            try:
-                                # try to remove the directory
-                                os.rmdir(current_dir)
+                            # is anything in the subdirectory?
+                            if len(os.listdir(current_dir)) == 0:
+                                try:
+                                    # try to remove the directory
+                                    os.rmdir(current_dir)
 
-                                self.logger.debug('Empty subdirectory %s has been removed.', current_dir)
-                            # if this occurs, show it as a warning as the directory is not configured properly
-                            except PermissionError:
-                                self.logger.warning('There was a permissions error removing directory %s.', current_dir)
+                                    self.logger.debug('Empty subdirectory %s has been removed.', current_dir)
+                                # if this occurs, show it as a warning as the directory is not configured properly
+                                except PermissionError:
+                                    self.logger.warning('There was a permissions error removing directory %s.', current_dir)
 
-                                # set the failure flag
-                                ret_val = False
+                                    # set the failure flag
+                                    ret_val = False
 
-                                # no need to continue
+                                    # no need to continue
+                                    break
+                                # all other issues will be ignored
+                                except OSError:
+                                    self.logger.debug('Exception removing directory %s, ignoring.', current_dir)
+                            else:
+                                self.logger.debug('Directory %s was not empty, interrogation complete.', current_dir)
+
+                                # there is no need to continue looking for empty directories
                                 break
-                            # all other issues will be ignored
-                            except OSError:
-                                self.logger.debug('Exception removing directory %s, ignoring.', current_dir)
-                        else:
-                            self.logger.debug('Directory %s was not empty, interrogation complete.', current_dir)
-
-                            # there is no need to continue looking for empty directories
-                            break
-                else:
-                    self.logger.warning('Warning: no TDS path found for instance id %s.', instance_id)
-            except FileNotFoundError:
-                self.logger.warning('Warning directory %s does not exist for %s.', data_path, instance_id)
+                    else:
+                        self.logger.warning('Warning: no TDS path found for instance id %s.', instance_id)
+                except FileNotFoundError:
+                    self.logger.warning('Warning directory %s does not exist for %s.', data_path, instance_id)
+            else:
+                self.logger.warning('Error: Instance id %s is in an unexpected format.', instance_id)
+                ret_val = False
         else:
-            self.logger.warning('Error: Instance id %s is in an unexpected format.', instance_id)
-            ret_val = False
+            self.logger.warning('Warning: The TDS URL was not specified for %s.', instance_id)
 
         # return the result
         return ret_val

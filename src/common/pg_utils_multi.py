@@ -25,8 +25,8 @@ class PGUtilsMultiConnect:
     """
         Base class for database functionalities.
 
-        This class supports setting up connections to multiple databases. To do that
-        the class relies on environment parameter names that adhere to a specific
+        This class supports setting up connections to multiple databases.
+        To do that, the class relies on environment parameter names that adhere to a specific
         naming convention. e.g. <DB name>_DB_<parameter name>. Note that the
         final environment parameter should be all uppercase.
 
@@ -39,7 +39,7 @@ class PGUtilsMultiConnect:
 
         :param db_names:
         """
-        # if a reference to a logger passed in use it
+        # if a reference to a logger is passed in use it
         if _logger is not None:
             # get a handle to a logger
             self.logger = _logger
@@ -68,7 +68,7 @@ class PGUtilsMultiConnect:
             conn_config = self.get_conn_config(db_name)
 
             # if a connection configuration was returned
-            if conn_config:
+            if conn_config != '':
                 # create a temporary tuple to get the discovery process started
                 temp_tuple: namedtuple = self.db_info_tpl(db_name, conn_config, None)
 
@@ -127,7 +127,7 @@ class PGUtilsMultiConnect:
             # create a connection string
             connection_str: str = f"host={host} port={port} dbname={dbname} user={user} password={password}"
         else:
-            connection_str = None
+            connection_str = ''
 
         # return to the caller
         return connection_str
@@ -200,7 +200,7 @@ class PGUtilsMultiConnect:
         cursor = None
 
         try:
-            # is there an existing connection
+            # is there an existing connection?
             if not db_info.conn:
                 self.logger.debug('Existing DB connection not found for %s', db_info.name)
 
@@ -257,7 +257,7 @@ class PGUtilsMultiConnect:
         # insure we have a valid DB connection
         success = self.get_db_connection(db_info)
 
-        # did we get a connection
+        # did we get a connection?
         if success:
             # init the cursor
             cursor = None
