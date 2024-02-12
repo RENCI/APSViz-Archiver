@@ -19,7 +19,7 @@ from src.test.test_utils import run_rule
 from src.common.geoserver_utils import GeoServerUtils
 from src.common.rule_utils import RuleUtils
 
-# init the full coverage store name (aka instance id e.g. 4303-2023020206-namforecast_maxele63)
+# init the full coverage store name (aka instance id e.g., 4303-2023020206-namforecast_maxele63)
 instance_id: str = 'test_store'
 
 # set the test mode
@@ -68,8 +68,8 @@ def setup_dirs_and_envs() -> (str, str):
     os.environ['TDS_BASE_PATH'] = base_path
 
     # set the TDS server url. this must be in sync with the namespace the geoserver is in
-    # it must match the location of the TDS test data. anything else will not pe processed
-    os.environ['TDS_URL'] = os.environ.get('TDS_URL', 'https://tds.renci.org/thredds/fileServer/')
+    # it must match the location of the TDS test data. anything else will not be processed
+    os.environ['TDS_URL'] = os.environ.get('TDS_URL', 'https://tds.renci.org/thredds/fileServer/')  # 'https://tds.renci.org/thredds/fileServer/'
 
     # source location of all test files
     source_directory: str = os.path.join(base_path, geoserver_workspace)
@@ -97,6 +97,28 @@ def setup_dirs_and_envs() -> (str, str):
 
 # setup for testing
 source_dir, dest_dir, obs_proj_dir = setup_dirs_and_envs()
+
+
+@pytest.mark.skip(reason="Local test only")
+def test_geoserver_remove_rule():
+    """
+    tests the retrieval of geoserver entries that meet rule criteria
+
+    :return:
+    """
+    # create a test rule dict
+    test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
+                       'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': 237, 'predicate_type': 'GREATER_THAN',
+                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': test_mode}
+
+    # create test data
+    create_test_dirs(0, 1, 1)
+
+    # run the rule. the first thing in this method is to convert the dict to a rule
+    process_stats = run_rule(test_rule)
+
+    # interrogate the result
+    assert process_stats['failed'] == 0 and process_stats['removed'] > 0 and process_stats['swept'] > 0
 
 
 def create_geoserver_store(store_type: str) -> bool:
@@ -176,7 +198,7 @@ def create_test_dirs(start: int, stop: int, max_count: int):
 
     # did we get data?
     if len(stores) != 0:
-        # loop through the stores
+        # loop through the stores. note the number of instances to process is limited by the input params.
         for store in stores[start:stop]:
             # check the counter
             if count < max_count:
@@ -202,28 +224,6 @@ def create_test_dirs(start: int, stop: int, max_count: int):
             if not os.path.exists(full_obs_path):
                 # create an obsmod directory
                 os.mkdir(full_obs_path)
-
-
-@pytest.mark.skip(reason="Local test only")
-def test_geoserver_remove_rule():
-    """
-    tests the retrieval of geoserver entries that meet rule criteria
-
-    :return:
-    """
-    # create a test rule dict
-    test_rule: dict = {'name': 'Test - Remove geoserver entries BY_AGE', 'description': 'Remove geoserver entries BY_AGE.',
-                       'query_criteria_type': 'BY_AGE', 'query_data_type': 'INTEGER', 'query_data_value': 237, 'predicate_type': 'GREATER_THAN',
-                       'action_type': 'GEOSERVER_REMOVE', 'data_type': 'NONE', 'source': 'NA', 'destination': 'NA', 'debug': test_mode}
-
-    # create test data
-    create_test_dirs(0, 1, 1)
-
-    # run the rule. the first thing in this method is to convert the dict to a rule
-    process_stats = run_rule(test_rule)
-
-    # interrogate the result
-    assert process_stats['failed'] == 0 and process_stats['removed'] > 0 and process_stats['swept'] > 0
 
 
 @pytest.mark.skip(reason="Local test only")
