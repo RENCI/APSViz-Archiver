@@ -17,3 +17,4 @@ __pycache__/
 /src/test/test_files/
 /src/test/tds-test/
 
+/src/test/Ddvolsapsvizlogs/APSVIZ.Archiver.GeoServerUtils.log
