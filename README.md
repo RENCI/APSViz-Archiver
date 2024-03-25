@@ -19,8 +19,8 @@ Archives file created by the various APSViz applications and processes.
 [![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://www.renci.org/)
 #### Components and versions...
 [![Python](https://img.shields.io/badge/Python-3.12.2-orange)](https://github.com/python/cpython)
-[![Linting Pylint](https://img.shields.io/badge/Pylint-%203.0.3-yellow)](https://github.com/PyCQA/pylint)
-[![Pytest](https://img.shields.io/badge/Pytest-%208.0.0-blue)](https://github.com/pytest-dev/pytest)
+[![Linting Pylint](https://img.shields.io/badge/Pylint-%203.1.0-yellow)](https://github.com/PyCQA/pylint)
+[![Pytest](https://img.shields.io/badge/Pytest-%208.1.0-blue)](https://github.com/pytest-dev/pytest)
 #### Build status...
 [![Pylint and Pytest](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-pytest.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/pylint-pytest.yml)
 [![Build and push the Docker image](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSVIZ-Archiver/actions/workflows/image-push.yml)
