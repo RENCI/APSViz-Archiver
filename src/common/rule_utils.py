@@ -278,7 +278,7 @@ class RuleUtils:
             ret_val = True
 
         except Exception:
-            self.logger.exception('Error: General exception detected during a directory removal.')
+            self.logger.exception('Error: General exception detected during a file removal.')
 
         # return to the caller
         return ret_val
