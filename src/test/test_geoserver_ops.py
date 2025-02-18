@@ -255,7 +255,7 @@ def test_get_geoserver_entities():
     # interrogate the result
     assert len(entities) > 0
 
-
+@pytest.mark.skip(reason="Local test only")
 def test_get_coverage_store():
     """
     Tests the retrieval of a geoserver coverage store
@@ -286,7 +286,7 @@ def test_get_coverage_store():
     # remove the test store, assert on failure
     assert remove_geoserver_store(store_type)
 
-
+@pytest.mark.skip(reason="Local test only")
 def test_get_coverage_stores():
     """
     Tests getting all the geoserver coverage stores
@@ -317,7 +317,7 @@ def test_get_coverage_stores():
     # remove the test store, assert on failure
     assert remove_geoserver_store(store_type)
 
-
+@pytest.mark.skip(reason="Local test only")
 def test_remove_coverage_store():
     """
     Tests the deletion of a geoserver coverage store
